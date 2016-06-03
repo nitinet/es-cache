@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "sourceMap": false,
+        "outDir": "./",
+        "allowSyntheticDefaultImports": true
+    },
+    "exclude": [
+        "typings",
+        "node_modules"
+    ]
+}
