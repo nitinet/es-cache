@@ -1,4 +1,4 @@
-/// <reference path="./typings/globals/node/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
 
 interface StoreCallback {
   (key?: (string | number | symbol)): any;

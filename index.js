@@ -1,4 +1,4 @@
-/// <reference path="./typings/globals/node/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
 "use strict";
 class StoreValue {
     constructor() {
