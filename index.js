@@ -1,4 +1,3 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
 "use strict";
 class StoreValue {
     constructor() {
@@ -32,11 +31,11 @@ class Cache {
             if (typeof expire !== 'undefined' && (typeof expire !== 'number' || isNaN(expire) || expire <= 0)) {
                 throw new Error("timeout is not a number or less then 0");
             }
-            if (typeof timeoutCallback !== 'undefined' && typeof timeoutCallback !== 'function') {
+            if (timeoutCallback && typeof timeoutCallback !== 'undefined' && typeof timeoutCallback !== 'function') {
                 throw new Error('Cache timeout callback must be a function');
             }
             let rec = new StoreValue();
-            rec.key = key;
+            rec.key = key.toString();
             rec.expire = expire;
             if (val && typeof val === 'function') {
                 rec.valueFunc = val;
@@ -45,7 +44,7 @@ class Cache {
             else {
                 rec.value = val;
             }
-            if (!isNaN(rec.expire)) {
+            if (rec.expire && !isNaN(rec.expire)) {
                 let x = this;
                 if (rec.valueFunc) {
                     rec.refresh();

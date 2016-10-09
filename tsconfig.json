@@ -3,8 +3,8 @@
         "target": "ES6",
         "module": "commonjs",
         "sourceMap": false,
-        "outDir": "./",
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "removeComments": true
     },
     "exclude": [
         "typings",

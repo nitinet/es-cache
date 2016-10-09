@@ -47,7 +47,7 @@ class Cache {
         throw new Error("timeout is not a number or less then 0");
       }
 
-      if (typeof timeoutCallback !== 'undefined' && typeof timeoutCallback !== 'function') {
+      if (timeoutCallback && typeof timeoutCallback !== 'undefined' && typeof timeoutCallback !== 'function') {
         throw new Error('Cache timeout callback must be a function');
       }
 
@@ -60,13 +60,13 @@ class Cache {
       } else {
         rec.value = val;
       }
-      if (!isNaN(rec.expire)) {
-        let x = this;
+      if (rec.expire && !isNaN(rec.expire)) {
+        let that = this;
         if (rec.valueFunc) {
           rec.refresh();
         } else {
           rec.timeout = setTimeout(function () {
-            x.del(rec.key);
+            that.del(rec.key);
             if (timeoutCallback) {
               timeoutCallback(key);
             }
