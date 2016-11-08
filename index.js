@@ -2,29 +2,25 @@
 class StoreValue {
     constructor() {
     }
-    refresh() {
-        if (!isNaN(this.expire)) {
-            let x = this;
-            this.timeout = setTimeout(function () {
-                x.value = null;
-                if (x.valueFunc) {
-                    x.value = x.valueFunc(x.key);
-                    x.refresh();
-                }
-            }, this.expire);
-        }
-    }
 }
 class Cache {
-    constructor() {
+    constructor(valueFunc, expire) {
         this._store = new Map();
+        this.expire = 86400000;
+        this.valueFunc = valueFunc ? valueFunc : null;
+        this.expire = expire ? expire : this.expire;
     }
     get(key) {
         let s = this._store.get(key.toString());
+        let result = null;
         if (s) {
-            return s.value;
+            result = s.value ? s.value : s.valueFunc(s.key);
         }
-        return null;
+        if (!result && this.valueFunc) {
+            result = this.valueFunc(key);
+            this.put(key, result, this.expire);
+        }
+        return result;
     }
     put(key, val, expire, timeoutCallback) {
         try {
@@ -35,7 +31,7 @@ class Cache {
                 throw new Error('Cache timeout callback must be a function');
             }
             let rec = new StoreValue();
-            rec.key = key.toString();
+            rec.key = key;
             rec.expire = expire;
             if (val && typeof val === 'function') {
                 rec.valueFunc = val;
@@ -45,18 +41,13 @@ class Cache {
                 rec.value = val;
             }
             if (rec.expire && !isNaN(rec.expire)) {
-                let x = this;
-                if (rec.valueFunc) {
-                    rec.refresh();
-                }
-                else {
-                    rec.timeout = setTimeout(function () {
-                        x.del(rec.key);
-                        if (timeoutCallback) {
-                            timeoutCallback(key);
-                        }
-                    }, rec.expire);
-                }
+                let that = this;
+                rec.timeout = setTimeout(function () {
+                    rec.value = null;
+                    if (timeoutCallback) {
+                        timeoutCallback(key);
+                    }
+                }, rec.expire);
             }
             this._store.set(key.toString(), rec);
             return rec.value;
@@ -66,7 +57,13 @@ class Cache {
         }
     }
     del(key) {
-        let rec = this._store.get(key.toString());
+        if (key) {
+            key = key.toString();
+        }
+        else {
+            return false;
+        }
+        let rec = this._store.get(key);
         if (rec) {
             clearTimeout(rec.timeout);
             this._store.delete(key.toString());

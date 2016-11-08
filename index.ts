@@ -12,33 +12,30 @@ class StoreValue {
   timeout: NodeJS.Timer;
 
   constructor() { }
-
-  refresh() {
-    if (!isNaN(this.expire)) {
-      let x = this;
-      this.timeout = setTimeout(function () {
-        x.value = null;
-        if (x.valueFunc) {
-          x.value = x.valueFunc(x.key);
-          x.refresh();
-        }
-      }, this.expire);
-    }
-  }
-
 }
 
 class Cache {
   _store: Map<String, StoreValue> = new Map<String, StoreValue>();
 
-  constructor() { }
+  valueFunc: StoreCallback;
+  expire: number = 86400000;
+
+  constructor(valueFunc?: StoreCallback, expire?: number) {
+    this.valueFunc = valueFunc ? valueFunc : null;
+    this.expire = expire ? expire : this.expire;
+  }
 
   get(key: (string | number | symbol)): any {
     let s = this._store.get(key.toString());
+    let result = null;
     if (s) {
-      return s.value;
+      result = s.value ? s.value : s.valueFunc(s.key);
     }
-    return null;
+    if (!result && this.valueFunc) {
+      result = this.valueFunc(key);
+      this.put(key, result, this.expire);
+    }
+    return result;
   }
 
   put(key: (string | number | symbol), val: any, expire?: number, timeoutCallback?: StoreCallback): boolean {
@@ -62,16 +59,12 @@ class Cache {
       }
       if (rec.expire && !isNaN(rec.expire)) {
         let that = this;
-        if (rec.valueFunc) {
-          rec.refresh();
-        } else {
-          rec.timeout = setTimeout(function () {
-            that.del(rec.key);
-            if (timeoutCallback) {
-              timeoutCallback(key);
-            }
-          }, rec.expire);
-        }
+        rec.timeout = setTimeout(function () {
+          rec.value = null;
+          if (timeoutCallback) {
+            timeoutCallback(key);
+          }
+        }, rec.expire);
       }
       this._store.set(key.toString(), rec);
       return rec.value;
@@ -81,7 +74,12 @@ class Cache {
   }
 
   del(key: (string | number | symbol)): boolean {
-    let rec = this._store.get(key.toString());
+    if (key) {
+      key = key.toString();
+    } else {
+      return false;
+    }
+    let rec = this._store.get(<string>key);
     if (rec) {
       clearTimeout(rec.timeout);
       this._store.delete(key.toString());
