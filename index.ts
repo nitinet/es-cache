@@ -5,11 +5,12 @@ interface StoreCallback {
 }
 
 class StoreValue {
-  key: any;
-  value: any;
-  valueFunc: StoreCallback;
-  expire: number;
-  timeout: NodeJS.Timer;
+  key: any = null;
+  value: any = null;
+  valueFunc: StoreCallback = null;
+  expire: number = null;
+  timeout: NodeJS.Timer = null;
+  timeoutCallback: StoreCallback = null;
 
   constructor() { }
 }
@@ -17,23 +18,40 @@ class StoreValue {
 class Cache {
   _store: Map<String, StoreValue> = new Map<String, StoreValue>();
 
-  valueFunc: StoreCallback;
+  valueFunc: StoreCallback = null;
   expire: number = 86400000;
+  timeoutCallback: StoreCallback = null;
 
-  constructor(valueFunc?: StoreCallback, expire?: number) {
+  constructor(valueFunc?: StoreCallback, expire?: number, timeoutCallback?: StoreCallback) {
     this.valueFunc = valueFunc ? valueFunc : null;
     this.expire = expire ? expire : this.expire;
+    this.timeoutCallback = timeoutCallback ? timeoutCallback : null;
+  }
+
+  private setupExpire(store: StoreValue) {
+    if (store.expire && !isNaN(store.expire)) {
+      store.timeout = setTimeout(function () {
+        store.value = null;
+        if (store.timeoutCallback) {
+          store.timeoutCallback(store.key);
+        }
+      }, store.expire);
+    }
   }
 
   get(key: (string | number | symbol)): any {
     let s = this._store.get(key.toString());
     let result = null;
     if (s) {
-      result = s.value ? s.value : s.valueFunc(s.key);
+      if (s.value == null && s.valueFunc) {
+        s.value = s.valueFunc(s.key);
+        this.setupExpire(s);
+      }
+      result = s.value;
     }
-    if (!result && this.valueFunc) {
+    if (result == null && this.valueFunc) {
       result = this.valueFunc(key);
-      this.put(key, result, this.expire);
+      this.put(key, result, this.expire, this.timeoutCallback);
     }
     return result;
   }
@@ -50,22 +68,15 @@ class Cache {
 
       let rec: StoreValue = new StoreValue();
       rec.key = key;
-      rec.expire = expire;
       if (val && typeof val === 'function') {
         rec.valueFunc = val;
         rec.value = rec.valueFunc(rec.key);
       } else {
         rec.value = val;
       }
-      if (rec.expire && !isNaN(rec.expire)) {
-        let that = this;
-        rec.timeout = setTimeout(function () {
-          rec.value = null;
-          if (timeoutCallback) {
-            timeoutCallback(key);
-          }
-        }, rec.expire);
-      }
+      rec.expire = expire;
+      rec.timeoutCallback = timeoutCallback;
+      this.setupExpire(rec);
       this._store.set(key.toString(), rec);
       return rec.value;
     } catch (Error) {
