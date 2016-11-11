@@ -29,11 +29,15 @@ class Cache {
   }
 
   private setupExpire(store: StoreValue) {
+    let that = this;
     if (store.expire && !isNaN(store.expire)) {
       store.timeout = setTimeout(function () {
         store.value = null;
         if (store.timeoutCallback) {
           store.timeoutCallback(store.key);
+        }
+        if (!store.valueFunc) {
+          that.del(store.key);
         }
       }, store.expire);
     }
