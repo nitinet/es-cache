@@ -10,14 +10,19 @@ class StoreValue {
     }
 }
 class Cache {
-    constructor(valueFunc, expire, timeoutCallback) {
+    constructor(options) {
         this._store = new Map();
-        this.valueFunc = null;
+        this._keys = new Array();
+        this.valueFunction = null;
         this.expire = 86400000;
         this.timeoutCallback = null;
-        this.valueFunc = valueFunc ? valueFunc : null;
-        this.expire = expire ? expire : this.expire;
-        this.timeoutCallback = timeoutCallback ? timeoutCallback : null;
+        this.limit = null;
+        if (options) {
+            this.valueFunction = options.valueFunction ? options.valueFunction : null;
+            this.expire = options.expire ? options.expire : null;
+            this.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
+            this.limit = options.limit ? options.limit : null;
+        }
     }
     setupExpire(store) {
         let that = this;
@@ -43,8 +48,8 @@ class Cache {
             }
             result = s.value;
         }
-        if (result == null && this.valueFunc) {
-            result = this.valueFunc(key);
+        if (result == null && this.valueFunction) {
+            result = this.valueFunction(key);
             this.put(key, result, this.expire, this.timeoutCallback);
         }
         return result;
@@ -70,9 +75,15 @@ class Cache {
             rec.timeoutCallback = timeoutCallback;
             this.setupExpire(rec);
             this._store.set(key.toString(), rec);
+            let keysLength = this._keys.push(key.toString());
+            if (this.limit && keysLength > this.limit) {
+                let firstKey = this._keys.shift();
+                this.del(firstKey);
+            }
             return rec.value;
         }
-        catch (Error) {
+        catch (error) {
+            console.log(error);
             return null;
         }
     }
@@ -83,29 +94,30 @@ class Cache {
         else {
             return false;
         }
-        let rec = this._store.get(key);
-        if (rec) {
-            clearTimeout(rec.timeout);
+        let keyIndex = this._keys.indexOf(key);
+        if (keyIndex != -1) {
+            this._keys.splice(keyIndex, 1);
+        }
+        let val = this._store.get(key);
+        if (val) {
+            if (val.timeout) {
+                clearTimeout(val.timeout);
+            }
             this._store.delete(key.toString());
             return true;
         }
         return false;
     }
     clear() {
-        for (let val of this._store.values()) {
-            clearTimeout(val.timeout);
+        for (let key of this._keys) {
+            this.del(key);
         }
-        this._store.clear();
     }
     size() {
-        return this._store.size;
+        return this._keys.length;
     }
     keys() {
-        let res = new Array();
-        for (let key of this._store.keys()) {
-            res.push(key);
-        }
-        return res;
+        return this._keys;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

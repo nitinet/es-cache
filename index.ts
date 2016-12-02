@@ -16,16 +16,21 @@ class StoreValue {
 }
 
 class Cache {
-  _store: Map<String, StoreValue> = new Map<String, StoreValue>();
+  _store: Map<string, StoreValue> = new Map<string, StoreValue>();
+  _keys: Array<string> = new Array<string>();
 
-  valueFunc: StoreCallback = null;
+  valueFunction: StoreCallback = null;
   expire: number = 86400000;
   timeoutCallback: StoreCallback = null;
+  limit: number = null;
 
-  constructor(valueFunc?: StoreCallback, expire?: number, timeoutCallback?: StoreCallback) {
-    this.valueFunc = valueFunc ? valueFunc : null;
-    this.expire = expire ? expire : this.expire;
-    this.timeoutCallback = timeoutCallback ? timeoutCallback : null;
+  constructor(options?: any) {
+    if (options) {
+      this.valueFunction = options.valueFunction ? options.valueFunction : null;
+      this.expire = options.expire ? options.expire : null;
+      this.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
+      this.limit = options.limit ? options.limit : null;
+    }
   }
 
   private setupExpire(store: StoreValue) {
@@ -53,8 +58,8 @@ class Cache {
       }
       result = s.value;
     }
-    if (result == null && this.valueFunc) {
-      result = this.valueFunc(key);
+    if (result == null && this.valueFunction) {
+      result = this.valueFunction(key);
       this.put(key, result, this.expire, this.timeoutCallback);
     }
     return result;
@@ -82,8 +87,16 @@ class Cache {
       rec.timeoutCallback = timeoutCallback;
       this.setupExpire(rec);
       this._store.set(key.toString(), rec);
+
+      // Removing Overlimit element
+      let keysLength = this._keys.push(key.toString());
+      if (this.limit && keysLength > this.limit) {
+        let firstKey = this._keys.shift();
+        this.del(firstKey);
+      }
       return rec.value;
-    } catch (Error) {
+    } catch (error) {
+      console.log(error);
       return null;
     }
   }
@@ -94,9 +107,15 @@ class Cache {
     } else {
       return false;
     }
-    let rec = this._store.get(<string>key);
-    if (rec) {
-      clearTimeout(rec.timeout);
+    let keyIndex = this._keys.indexOf(key);
+    if (keyIndex != -1) {
+      this._keys.splice(keyIndex, 1);
+    }
+    let val = this._store.get(key);
+    if (val) {
+      if (val.timeout) {
+        clearTimeout(val.timeout);
+      }
       this._store.delete(key.toString());
       return true;
     }
@@ -104,22 +123,17 @@ class Cache {
   }
 
   clear(): void {
-    for (let val of this._store.values()) {
-      clearTimeout(val.timeout);
+    for (let key of this._keys) {
+      this.del(key);
     }
-    this._store.clear();
   }
 
   size(): number {
-    return this._store.size;
+    return this._keys.length;
   }
 
   keys(): Array<any> {
-    let res: Array<String> = new Array<String>();
-    for (let key of this._store.keys()) {
-      res.push(key);
-    }
-    return res;
+    return this._keys;
   }
 
 }
