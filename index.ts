@@ -4,6 +4,13 @@ interface StoreCallback {
   (key?: (string | number | symbol)): any;
 }
 
+interface IOption {
+  valueFunction?: StoreCallback;
+  expire?: number;
+  timeoutCallback?: StoreCallback;
+  limit?: number;
+}
+
 class StoreValue {
   key: any = null;
   value: any = null;
@@ -24,7 +31,7 @@ class Cache {
   timeoutCallback: StoreCallback = null;
   limit: number = null;
 
-  constructor(options?: any) {
+  constructor(options?: IOption) {
     if (options) {
       this.valueFunction = options.valueFunction ? options.valueFunction : null;
       this.expire = options.expire ? options.expire : null;
