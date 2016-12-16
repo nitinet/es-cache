@@ -1,7 +1,7 @@
 /// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
 
 interface StoreCallback {
-  (key?: (string | number | symbol)): any;
+  (key?: (string | number | symbol)): Promise<any>;
 }
 
 interface IOption {
@@ -55,24 +55,24 @@ class Cache {
     }
   }
 
-  get(key: (string | number | symbol)): any {
+  async get(key: (string | number | symbol)): Promise<any> {
     let s = this._store.get(key.toString());
     let result = null;
     if (s) {
       if (s.value == null && s.valueFunc) {
-        s.value = s.valueFunc(s.key);
+        s.value = await s.valueFunc(s.key);
         this.setupExpire(s);
       }
       result = s.value;
     }
     if (result == null && this.valueFunction) {
-      result = this.valueFunction(key);
+      result = await this.valueFunction(key);
       this.put(key, result, this.expire, this.timeoutCallback);
     }
     return result;
   }
 
-  put(key: (string | number | symbol), val: any, expire?: number, timeoutCallback?: StoreCallback): boolean {
+  async put(key: (string | number | symbol), val: any, expire?: number, timeoutCallback?: StoreCallback): Promise<boolean> {
     try {
       if (typeof expire !== 'undefined' && (typeof expire !== 'number' || isNaN(expire) || expire <= 0)) {
         throw new Error("timeout is not a number or less then 0");
@@ -86,7 +86,7 @@ class Cache {
       rec.key = key;
       if (val && typeof val === 'function') {
         rec.valueFunc = val;
-        rec.value = rec.valueFunc(rec.key);
+        rec.value = await rec.valueFunc(rec.key);
       } else {
         rec.value = val;
       }

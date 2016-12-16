@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
 class StoreValue {
     constructor() {
         this.key = null;
@@ -39,53 +47,57 @@ class Cache {
         }
     }
     get(key) {
-        let s = this._store.get(key.toString());
-        let result = null;
-        if (s) {
-            if (s.value == null && s.valueFunc) {
-                s.value = s.valueFunc(s.key);
-                this.setupExpire(s);
+        return __awaiter(this, void 0, void 0, function* () {
+            let s = this._store.get(key.toString());
+            let result = null;
+            if (s) {
+                if (s.value == null && s.valueFunc) {
+                    s.value = yield s.valueFunc(s.key);
+                    this.setupExpire(s);
+                }
+                result = s.value;
             }
-            result = s.value;
-        }
-        if (result == null && this.valueFunction) {
-            result = this.valueFunction(key);
-            this.put(key, result, this.expire, this.timeoutCallback);
-        }
-        return result;
+            if (result == null && this.valueFunction) {
+                result = yield this.valueFunction(key);
+                this.put(key, result, this.expire, this.timeoutCallback);
+            }
+            return result;
+        });
     }
     put(key, val, expire, timeoutCallback) {
-        try {
-            if (typeof expire !== 'undefined' && (typeof expire !== 'number' || isNaN(expire) || expire <= 0)) {
-                throw new Error("timeout is not a number or less then 0");
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (typeof expire !== 'undefined' && (typeof expire !== 'number' || isNaN(expire) || expire <= 0)) {
+                    throw new Error("timeout is not a number or less then 0");
+                }
+                if (timeoutCallback && typeof timeoutCallback !== 'undefined' && typeof timeoutCallback !== 'function') {
+                    throw new Error('Cache timeout callback must be a function');
+                }
+                let rec = new StoreValue();
+                rec.key = key;
+                if (val && typeof val === 'function') {
+                    rec.valueFunc = val;
+                    rec.value = yield rec.valueFunc(rec.key);
+                }
+                else {
+                    rec.value = val;
+                }
+                rec.expire = expire;
+                rec.timeoutCallback = timeoutCallback;
+                this.setupExpire(rec);
+                this._store.set(key.toString(), rec);
+                let keysLength = this._keys.push(key.toString());
+                if (this.limit && keysLength > this.limit) {
+                    let firstKey = this._keys.shift();
+                    this.del(firstKey);
+                }
+                return rec.value;
             }
-            if (timeoutCallback && typeof timeoutCallback !== 'undefined' && typeof timeoutCallback !== 'function') {
-                throw new Error('Cache timeout callback must be a function');
+            catch (error) {
+                console.log(error);
+                return null;
             }
-            let rec = new StoreValue();
-            rec.key = key;
-            if (val && typeof val === 'function') {
-                rec.valueFunc = val;
-                rec.value = rec.valueFunc(rec.key);
-            }
-            else {
-                rec.value = val;
-            }
-            rec.expire = expire;
-            rec.timeoutCallback = timeoutCallback;
-            this.setupExpire(rec);
-            this._store.set(key.toString(), rec);
-            let keysLength = this._keys.push(key.toString());
-            if (this.limit && keysLength > this.limit) {
-                let firstKey = this._keys.shift();
-                this.del(firstKey);
-            }
-            return rec.value;
-        }
-        catch (error) {
-            console.log(error);
-            return null;
-        }
+        });
     }
     del(key) {
         if (key) {
