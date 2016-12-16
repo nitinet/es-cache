@@ -42,7 +42,7 @@ class Cache {
 
   private setupExpire(store: StoreValue) {
     let that = this;
-    if (store.expire && !isNaN(store.expire)) {
+    if (store.expire) {
       store.timeout = setTimeout(function () {
         store.value = null;
         if (store.timeoutCallback) {
@@ -74,11 +74,11 @@ class Cache {
 
   async put(key: (string | number | symbol), val: any, expire?: number, timeoutCallback?: StoreCallback): Promise<boolean> {
     try {
-      if (typeof expire !== 'undefined' && (typeof expire !== 'number' || isNaN(expire) || expire <= 0)) {
+      if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
         throw new Error("timeout is not a number or less then 0");
       }
 
-      if (timeoutCallback && typeof timeoutCallback !== 'undefined' && typeof timeoutCallback !== 'function') {
+      if (timeoutCallback && typeof timeoutCallback !== 'function') {
         throw new Error('Cache timeout callback must be a function');
       }
 
