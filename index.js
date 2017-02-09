@@ -7,129 +7,51 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-class StoreValue {
-    constructor() {
-        this.key = null;
-        this.value = null;
-        this.valueFunc = null;
-        this.expire = null;
-        this.timeout = null;
-        this.timeoutCallback = null;
-    }
-}
+const LocalStore_1 = require("./lib/LocalStore");
+const RedisStore_1 = require("./lib/RedisStore");
 class Cache {
     constructor(options) {
-        this._store = new Map();
-        this._keys = new Array();
-        this.valueFunction = null;
-        this.expire = 86400000;
-        this.timeoutCallback = null;
-        this.limit = null;
+        this._store = null;
         if (options) {
-            this.valueFunction = options.valueFunction ? options.valueFunction : null;
-            this.expire = options.expire ? options.expire : null;
-            this.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
-            this.limit = options.limit ? options.limit : null;
+            switch (options.store.type) {
+                case 'redis': {
+                    this._store = new RedisStore_1.default(options.store);
+                    break;
+                }
+                default:
+                    this._store = new LocalStore_1.default();
+                    break;
+            }
+            this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
+            this._store.expire = options.expire ? options.expire : null;
+            this._store.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
+            this._store.limit = options.limit ? options.limit : null;
         }
-    }
-    setupExpire(store) {
-        let that = this;
-        if (store.expire) {
-            store.timeout = setTimeout(function () {
-                store.value = null;
-                if (store.timeoutCallback) {
-                    store.timeoutCallback(store.key);
-                }
-                if (!store.valueFunc) {
-                    that.del(store.key);
-                }
-            }, store.expire);
+        else {
+            this._store = new LocalStore_1.default();
         }
     }
     get(key) {
         return __awaiter(this, void 0, void 0, function* () {
-            let s = this._store.get(key.toString());
-            let result = null;
-            if (s) {
-                if (s.value == null && s.valueFunc) {
-                    s.value = yield s.valueFunc(s.key);
-                    this.setupExpire(s);
-                }
-                result = s.value;
-            }
-            if (result == null && this.valueFunction) {
-                result = yield this.valueFunction(key);
-                this.put(key, result, this.expire, this.timeoutCallback);
-            }
-            return result;
+            return this._store.get(key);
         });
     }
     put(key, val, expire, timeoutCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
-                    throw new Error("timeout is not a number or less then 0");
-                }
-                if (timeoutCallback && typeof timeoutCallback !== 'function') {
-                    throw new Error('Cache timeout callback must be a function');
-                }
-                let rec = new StoreValue();
-                rec.key = key;
-                if (val && typeof val === 'function') {
-                    rec.valueFunc = val;
-                    rec.value = yield rec.valueFunc(rec.key);
-                }
-                else {
-                    rec.value = val;
-                }
-                rec.expire = expire;
-                rec.timeoutCallback = timeoutCallback;
-                this.setupExpire(rec);
-                this._store.set(key.toString(), rec);
-                let keysLength = this._keys.push(key.toString());
-                if (this.limit && keysLength > this.limit) {
-                    let firstKey = this._keys.shift();
-                    this.del(firstKey);
-                }
-                return rec.value;
-            }
-            catch (error) {
-                console.log(error);
-                return null;
-            }
+            return this._store.put(key, val, expire, timeoutCallback);
         });
     }
     del(key) {
-        if (key) {
-            key = key.toString();
-        }
-        else {
-            return false;
-        }
-        let keyIndex = this._keys.indexOf(key);
-        if (keyIndex != -1) {
-            this._keys.splice(keyIndex, 1);
-        }
-        let val = this._store.get(key);
-        if (val) {
-            if (val.timeout) {
-                clearTimeout(val.timeout);
-            }
-            this._store.delete(key.toString());
-            return true;
-        }
-        return false;
+        return this._store.del(key);
     }
     clear() {
-        for (let key of this._keys) {
-            this.del(key);
-        }
+        this._store.clear();
     }
     size() {
-        return this._keys.length;
+        return this._store.size();
     }
     keys() {
-        return this._keys;
+        return this._store.keys();
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
