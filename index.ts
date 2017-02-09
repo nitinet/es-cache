@@ -1,5 +1,3 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
-
 interface StoreCallback {
   (key?: (string | number | symbol)): Promise<any>;
 }
@@ -22,7 +20,7 @@ class StoreValue {
   constructor() { }
 }
 
-class Cache {
+export default class Cache {
   _store: Map<string, StoreValue> = new Map<string, StoreValue>();
   _keys: Array<string> = new Array<string>();
 
@@ -144,5 +142,3 @@ class Cache {
   }
 
 }
-
-export default Cache;

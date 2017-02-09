@@ -1,13 +1,18 @@
 {
-    "compilerOptions": {
-        "target": "ES6",
-        "module": "commonjs",
-        "sourceMap": false,
-        "allowSyntheticDefaultImports": true,
-        "removeComments": true
-    },
-    "exclude": [
-        "typings",
-        "node_modules"
-    ]
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"sourceMap": false,
+		"allowSyntheticDefaultImports": true,
+		"removeComments": true,
+		"typeRoots": [
+			"./typings/globals/",
+			"./typings/modules/"
+		]
+	},
+	"exclude": [
+		"typings",
+		"node_modules"
+	]
 }
