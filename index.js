@@ -13,14 +13,19 @@ class Cache {
     constructor(options) {
         this._store = null;
         if (options) {
-            switch (options.store.type) {
-                case 'redis': {
-                    this._store = new RedisStore_1.default(options.store);
-                    break;
+            if (options.store) {
+                switch (options.store.type) {
+                    case 'redis': {
+                        this._store = new RedisStore_1.default(options.store);
+                        break;
+                    }
+                    default:
+                        this._store = new LocalStore_1.default();
+                        break;
                 }
-                default:
-                    this._store = new LocalStore_1.default();
-                    break;
+            }
+            else {
+                this._store = new LocalStore_1.default();
             }
             this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
             this._store.expire = options.expire ? options.expire : null;

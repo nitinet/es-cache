@@ -7,15 +7,18 @@ export default class Cache {
 
   constructor(options?: Types.IOption) {
     if (options) {
-      switch (options.store.type) {
-        case 'redis': {
-          this._store = new RedisStore(options.store);
-          break;
+      if (options.store) {
+        switch (options.store.type) {
+          case 'redis': {
+            this._store = new RedisStore(options.store);
+            break;
+          }
+          default:
+            this._store = new LocalStore();
+            break;
         }
-
-        default:
-          this._store = new LocalStore();
-          break;
+      } else {
+        this._store = new LocalStore();
       }
 
       this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
