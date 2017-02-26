@@ -1,8 +1,9 @@
 {
   "name": "es-cache",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "A simple in-memory cache on ecmascript 6 and typescript.",
   "main": "index.js",
+  "types": "index.ts",
   "scripts": {
     "test": "node test.js"
   },

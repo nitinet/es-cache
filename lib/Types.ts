@@ -1,41 +1,41 @@
-export abstract class IStore {
-	valueFunction: StoreCallback = null;
+export abstract class IStore<K, V> {
+	valueFunction: StoreCallback<K, V> = null;
 	expire: number = 86400000;
-	timeoutCallback: StoreCallback = null;
+	timeoutCallback: StoreCallback<K, V> = null;
 	limit: number = null;
 
 	constructor() {
 	}
 
-	abstract get(key: (string | number | symbol)): Promise<any>;
-	abstract put(key: (string | number | symbol), val: any, expire?: number, timeoutCallback?: StoreCallback): Promise<boolean>;
-	abstract del(key: (string | number | symbol)): boolean;
+	abstract get(key: K): Promise<any>;
+	abstract put(key: K, val: V, expire?: number, timeoutCallback?: StoreCallback<K, V>): Promise<boolean>;
+	abstract del(key: K): boolean;
 	abstract clear(): void;
 	abstract size(): number;
-	abstract keys(): Array<any>;
+	abstract keys(): Array<K>;
 }
 
-export interface StoreCallback {
-	(key?: (string | number | symbol)): Promise<any>;
+export interface StoreCallback<K, V> {
+	(key?: K): Promise<V>;
 }
 
-export interface IOption {
-	valueFunction?: StoreCallback;
+export interface IOption<K, V> {
+	valueFunction?: StoreCallback<K, V>;
 	expire?: number;
-	timeoutCallback?: StoreCallback;
+	timeoutCallback?: StoreCallback<K, V>;
 	limit?: number;
 	store?: {
 		type?: string;
 	}
 }
 
-export class StoreValue {
+export class StoreValue<K, V> {
 	key: any = null;
 	value: any = null;
-	valueFunc: StoreCallback = null;
+	valueFunc: StoreCallback<K, V> = null;
 	expire: number = null;
 	timeout: NodeJS.Timer = null;
-	timeoutCallback: StoreCallback = null;
+	timeoutCallback: StoreCallback<K, V> = null;
 
 	constructor() { }
 }

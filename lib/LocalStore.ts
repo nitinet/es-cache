@@ -1,14 +1,14 @@
 import * as Types from './Types';
 
-export default class LocalStore extends Types.IStore {
-	_store: Map<string, Types.StoreValue> = new Map<string, Types.StoreValue>();
-	_keys: Array<string> = new Array<string>();
+export default class LocalStore<K, V> extends Types.IStore<K, V> {
+	_store: Map<K, Types.StoreValue<K, V>> = new Map<K, Types.StoreValue<K, V>>();
+	_keys: Array<K> = new Array<K>();
 
 	constructor() {
 		super();
 	}
 
-	private setupExpire(store: Types.StoreValue) {
+	private setupExpire(store: Types.StoreValue<K, V>) {
 		let that = this;
 		if (store.expire) {
 			store.timeout = setTimeout(function () {
@@ -23,8 +23,8 @@ export default class LocalStore extends Types.IStore {
 		}
 	}
 
-	async get(key: (string | number | symbol)): Promise<any> {
-		let s = this._store.get(key.toString());
+	async get(key: K): Promise<any> {
+		let s = this._store.get(key);
 		let result = null;
 		if (s) {
 			if (s.value == null && s.valueFunc) {
@@ -40,7 +40,7 @@ export default class LocalStore extends Types.IStore {
 		return result;
 	}
 
-	async put(key: (string | number | symbol), val: any, expire?: number, timeoutCallback?: Types.StoreCallback): Promise<boolean> {
+	async put(key: K, val: V, expire?: number, timeoutCallback?: Types.StoreCallback<K, V>): Promise<boolean> {
 		try {
 			if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
 				throw new Error("timeout is not a number or less then 0");
@@ -50,7 +50,7 @@ export default class LocalStore extends Types.IStore {
 				throw new Error('Cache timeout callback must be a function');
 			}
 
-			let rec: Types.StoreValue = new Types.StoreValue();
+			let rec: Types.StoreValue<K, V> = new Types.StoreValue();
 			rec.key = key;
 			if (val && typeof val === 'function') {
 				rec.valueFunc = val;
@@ -61,10 +61,10 @@ export default class LocalStore extends Types.IStore {
 			rec.expire = expire;
 			rec.timeoutCallback = timeoutCallback;
 			this.setupExpire(rec);
-			this._store.set(key.toString(), rec);
+			this._store.set(key, rec);
 
 			// Removing Overlimit element
-			let keysLength = this._keys.push(key.toString());
+			let keysLength = this._keys.push(key);
 			if (this.limit && keysLength > this.limit) {
 				let firstKey = this._keys.shift();
 				this.del(firstKey);
@@ -76,10 +76,8 @@ export default class LocalStore extends Types.IStore {
 		}
 	}
 
-	del(key: (string | number | symbol)): boolean {
-		if (key) {
-			key = key.toString();
-		} else {
+	del(key: K): boolean {
+		if (!key) {
 			return false;
 		}
 		let keyIndex = this._keys.indexOf(key);
@@ -91,7 +89,7 @@ export default class LocalStore extends Types.IStore {
 			if (val.timeout) {
 				clearTimeout(val.timeout);
 			}
-			this._store.delete(key.toString());
+			this._store.delete(key);
 			return true;
 		}
 		return false;
@@ -107,7 +105,7 @@ export default class LocalStore extends Types.IStore {
 		return this._keys.length;
 	}
 
-	keys(): Array<any> {
+	keys(): Array<K> {
 		return this._keys;
 	}
 }

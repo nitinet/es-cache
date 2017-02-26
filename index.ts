@@ -2,23 +2,23 @@ import * as Types from './lib/Types';
 import LocalStore from './lib/LocalStore';
 import RedisStore from './lib/RedisStore';
 
-export default class Cache {
-  private _store: Types.IStore = null;
+export default class Cache<K, V> {
+  private _store: Types.IStore<K, V> = null;
 
-  constructor(options?: Types.IOption) {
+  constructor(options?: Types.IOption<K, V>) {
     if (options) {
       if (options.store) {
         switch (options.store.type) {
           case 'redis': {
-            this._store = new RedisStore(options.store);
+            this._store = new RedisStore<K, V>(options.store);
             break;
           }
           default:
-            this._store = new LocalStore();
+            this._store = new LocalStore<K, V>();
             break;
         }
       } else {
-        this._store = new LocalStore();
+        this._store = new LocalStore<K, V>();
       }
 
       this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
@@ -26,19 +26,19 @@ export default class Cache {
       this._store.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
       this._store.limit = options.limit ? options.limit : null;
     } else {
-      this._store = new LocalStore();
+      this._store = new LocalStore<K, V>();
     }
   }
 
-  async get(key: (string | number | symbol)): Promise<any> {
+  async get(key: K): Promise<V> {
     return this._store.get(key);
   }
 
-  async put(key: (string | number | symbol), val: any, expire?: number, timeoutCallback?: Types.StoreCallback): Promise<boolean> {
+  async put(key: K, val: V, expire?: number, timeoutCallback?: Types.StoreCallback<K, V>): Promise<boolean> {
     return this._store.put(key, val, expire, timeoutCallback);
   }
 
-  del(key: (string | number | symbol)): boolean {
+  del(key: K): boolean {
     return this._store.del(key);
   }
 

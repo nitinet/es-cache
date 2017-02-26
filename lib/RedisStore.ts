@@ -1,7 +1,7 @@
 import * as Types from './Types';
 import * as redis from 'redis';
 
-export default class RedisStore extends Types.IStore {
+export default class RedisStore<K, V> extends Types.IStore<K, V> {
 	host: string = null;
 	port: number;
 	client: redis.RedisClient = null;
@@ -13,15 +13,15 @@ export default class RedisStore extends Types.IStore {
 		this.client = redis.createClient(option);
 	}
 
-	async get(key: (string | number | symbol)): Promise<any> {
+	async get(key: K): Promise<any> {
 		return null;
 	}
 
-	put(key: (string | number | symbol), val: any, expire?: number): Promise<boolean> {
+	put(key: K, val: V, expire?: number): Promise<boolean> {
 		return null;
 	}
 
-	del(key: (string | number | symbol)): boolean {
+	del(key: K): boolean {
 		return false;
 	}
 
@@ -33,7 +33,7 @@ export default class RedisStore extends Types.IStore {
 		return 0;
 	}
 
-	keys(): Array<any> {
+	keys(): Array<K> {
 		return null;
 	}
 }
