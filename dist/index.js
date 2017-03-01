@@ -34,13 +34,13 @@ class Cache {
     async put(key, val, expire, timeoutCallback) {
         return this._store.put(key, val, expire, timeoutCallback);
     }
-    del(key) {
-        return this._store.del(key);
+    async del(key) {
+        return await this._store.del(key);
     }
     clear() {
         this._store.clear();
     }
-    size() {
+    async size() {
         return this._store.size();
     }
     keys() {

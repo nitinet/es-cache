@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+
 export abstract class IStore<K, V> {
 	valueFunction: StoreCallback<K, V> = null;
 	expire: number = 86400000;
@@ -7,11 +9,21 @@ export abstract class IStore<K, V> {
 	constructor() {
 	}
 
-	abstract get(key: K): Promise<any>;
+	protected keyCode(key: K | string | number | boolean | symbol): string {
+		if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
+			return key.toString();
+		} else {
+			let hash = crypto.createHash('sha256');
+			hash.update(JSON.stringify(key));
+			return hash.digest('latin1');
+		}
+	}
+
+	abstract get(key: K): Promise<V>;
 	abstract put(key: K, val: V, expire?: number, timeoutCallback?: StoreCallback<K, V>): Promise<boolean>;
-	abstract del(key: K): boolean;
+	abstract del(key: K): Promise<boolean>;
 	abstract clear(): void;
-	abstract size(): number;
+	abstract size(): Promise<number>;
 	abstract keys(): Array<K>;
 }
 
@@ -26,6 +38,7 @@ export interface IOption<K, V> {
 	limit?: number;
 	store?: {
 		type?: string;
+		primitive?: boolean;
 	}
 }
 

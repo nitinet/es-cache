@@ -1,10 +1,21 @@
 "use strict";
+const crypto = require("crypto");
 class IStore {
     constructor() {
         this.valueFunction = null;
         this.expire = 86400000;
         this.timeoutCallback = null;
         this.limit = null;
+    }
+    keyCode(key) {
+        if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
+            return key.toString();
+        }
+        else {
+            let hash = crypto.createHash('sha256');
+            hash.update(JSON.stringify(key));
+            return hash.digest('latin1');
+        }
     }
 }
 exports.IStore = IStore;

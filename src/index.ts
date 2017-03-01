@@ -38,15 +38,15 @@ export default class Cache<K, V> {
     return this._store.put(key, val, expire, timeoutCallback);
   }
 
-  del(key: K): boolean {
-    return this._store.del(key);
+  async del(key: K): Promise<boolean> {
+    return await this._store.del(key);
   }
 
   clear(): void {
     this._store.clear();
   }
 
-  size(): number {
+  async size(): Promise<number> {
     return this._store.size();
   }
 

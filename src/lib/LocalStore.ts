@@ -1,7 +1,7 @@
 import * as Types from './Types';
 
 export default class LocalStore<K, V> extends Types.IStore<K, V> {
-	_store: Map<K, Types.StoreValue<K, V>> = new Map<K, Types.StoreValue<K, V>>();
+	_store: Map<string, Types.StoreValue<K, V>> = new Map<string, Types.StoreValue<K, V>>();
 	_keys: Array<K> = new Array<K>();
 
 	constructor() {
@@ -23,8 +23,8 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 		}
 	}
 
-	async get(key: K): Promise<any> {
-		let s = this._store.get(key);
+	async get(key: K): Promise<V> {
+		let s = this._store.get(this.keyCode(key));
 		let result = null;
 		if (s) {
 			if (s.value == null && s.valueFunc) {
@@ -61,7 +61,7 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 			rec.expire = expire;
 			rec.timeoutCallback = timeoutCallback;
 			this.setupExpire(rec);
-			this._store.set(key, rec);
+			this._store.set(this.keyCode(key), rec);
 
 			// Removing Overlimit element
 			let keysLength = this._keys.push(key);
@@ -76,7 +76,7 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 		}
 	}
 
-	del(key: K): boolean {
+	async del(key: K): Promise<boolean> {
 		if (!key) {
 			return false;
 		}
@@ -84,12 +84,12 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 		if (keyIndex != -1) {
 			this._keys.splice(keyIndex, 1);
 		}
-		let val = this._store.get(key);
+		let val = this._store.get(this.keyCode(key));
 		if (val) {
 			if (val.timeout) {
 				clearTimeout(val.timeout);
 			}
-			this._store.delete(key);
+			this._store.delete(this.keyCode(key));
 			return true;
 		}
 		return false;
@@ -101,7 +101,7 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 		}
 	}
 
-	size(): number {
+	async size(): Promise<number> {
 		return this._keys.length;
 	}
 

@@ -21,7 +21,7 @@ class LocalStore extends Types.IStore {
         }
     }
     async get(key) {
-        let s = this._store.get(key);
+        let s = this._store.get(this.keyCode(key));
         let result = null;
         if (s) {
             if (s.value == null && s.valueFunc) {
@@ -56,7 +56,7 @@ class LocalStore extends Types.IStore {
             rec.expire = expire;
             rec.timeoutCallback = timeoutCallback;
             this.setupExpire(rec);
-            this._store.set(key, rec);
+            this._store.set(this.keyCode(key), rec);
             let keysLength = this._keys.push(key);
             if (this.limit && keysLength > this.limit) {
                 let firstKey = this._keys.shift();
@@ -69,7 +69,7 @@ class LocalStore extends Types.IStore {
             return null;
         }
     }
-    del(key) {
+    async del(key) {
         if (!key) {
             return false;
         }
@@ -77,12 +77,12 @@ class LocalStore extends Types.IStore {
         if (keyIndex != -1) {
             this._keys.splice(keyIndex, 1);
         }
-        let val = this._store.get(key);
+        let val = this._store.get(this.keyCode(key));
         if (val) {
             if (val.timeout) {
                 clearTimeout(val.timeout);
             }
-            this._store.delete(key);
+            this._store.delete(this.keyCode(key));
             return true;
         }
         return false;
@@ -92,7 +92,7 @@ class LocalStore extends Types.IStore {
             this.del(key);
         }
     }
-    size() {
+    async size() {
         return this._keys.length;
     }
     keys() {
