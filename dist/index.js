@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const LocalStore_1 = require("./lib/LocalStore");
 const RedisStore_1 = require("./lib/RedisStore");
 class Cache {
@@ -47,5 +48,4 @@ class Cache {
         return this._store.keys();
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Cache;
+exports.Cache = Cache;

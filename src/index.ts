@@ -2,7 +2,7 @@ import * as Types from './lib/Types';
 import LocalStore from './lib/LocalStore';
 import RedisStore from './lib/RedisStore';
 
-export default class Cache<K, V> {
+class Cache<K, V> {
   private _store: Types.IStore<K, V> = null;
 
   constructor(options?: Types.IOption<K, V>) {
@@ -55,3 +55,5 @@ export default class Cache<K, V> {
   }
 
 }
+
+export { Cache };

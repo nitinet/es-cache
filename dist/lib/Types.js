@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const crypto = require("crypto");
 class IStore {
     constructor() {

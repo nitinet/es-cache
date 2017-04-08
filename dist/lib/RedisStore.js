@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Types = require("./Types");
 const redis = require("redis");
 class RedisStore extends Types.IStore {
@@ -133,5 +134,4 @@ class RedisStore extends Types.IStore {
         return null;
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = RedisStore;

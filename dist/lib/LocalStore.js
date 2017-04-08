@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Types = require("./Types");
 class LocalStore extends Types.IStore {
     constructor() {
@@ -99,5 +100,4 @@ class LocalStore extends Types.IStore {
         return this._keys;
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = LocalStore;
