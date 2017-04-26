@@ -19,7 +19,7 @@ export abstract class IStore<K, V> {
 		}
 	}
 
-	abstract get(key: K): Promise<V>;
+	abstract get(key: K, ...opts): Promise<V>;
 	abstract put(key: K, val: V, expire?: number, timeoutCallback?: StoreCallback<K, V>): Promise<boolean>;
 	abstract del(key: K): Promise<boolean>;
 	abstract clear(): void;
@@ -28,7 +28,7 @@ export abstract class IStore<K, V> {
 }
 
 export interface StoreCallback<K, V> {
-	(key?: K): Promise<V>;
+	(key?: K, ...opts): Promise<V>;
 }
 
 export interface IOption<K, V> {

@@ -29,8 +29,8 @@ class Cache {
             this._store = new LocalStore_1.default();
         }
     }
-    async get(key) {
-        return this._store.get(key);
+    async get(key, ...opts) {
+        return this._store.get(key, opts);
     }
     async put(key, val, expire, timeoutCallback) {
         return this._store.put(key, val, expire, timeoutCallback);

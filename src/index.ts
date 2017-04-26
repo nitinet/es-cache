@@ -30,8 +30,8 @@ class Cache<K, V> {
     }
   }
 
-  async get(key: K): Promise<V> {
-    return this._store.get(key);
+  async get(key: K, ...opts): Promise<V> {
+    return this._store.get(key, opts);
   }
 
   async put(key: K, val: V, expire?: number, timeoutCallback?: Types.StoreCallback<K, V>): Promise<boolean> {
