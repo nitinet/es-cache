@@ -1,7 +1,7 @@
 import * as Types from './Types';
 import * as redis from 'redis';
 
-export default class RedisStore<K, V> extends Types.IStore<K, V> {
+export default class RedisStore<K, V extends object> extends Types.IStore<K, V> {
 	host: string = null;
 	port: number;
 	prefix: string = null;
