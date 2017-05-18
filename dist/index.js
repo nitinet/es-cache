@@ -44,8 +44,15 @@ class Cache {
     async size() {
         return this._store.size();
     }
-    keys() {
+    async keys() {
         return this._store.keys();
+    }
+    async forEach(func) {
+        let that = this;
+        let keys = await this.keys();
+        keys.forEach(async (val) => {
+            await func(val, that);
+        });
     }
 }
 exports.Cache = Cache;

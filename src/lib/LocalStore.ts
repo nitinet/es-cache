@@ -64,10 +64,12 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 			this._store.set(this.keyCode(key), rec);
 
 			// Removing Overlimit element
-			let keysLength = this._keys.push(key);
-			if (this.limit && keysLength > this.limit) {
-				let firstKey = this._keys.shift();
-				this.del(firstKey);
+			this._keys.push(key);
+			if (this.limit && typeof this.limit == 'function') {
+				while (!await this.limit()) {
+					let firstKey = this._keys.shift();
+					this.del(firstKey);
+				}
 			}
 			return rec.value;
 		} catch (error) {
@@ -105,7 +107,7 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 		return this._keys.length;
 	}
 
-	keys(): Array<K> {
+	async	keys(): Promise<Array<K>> {
 		return this._keys;
 	}
 }

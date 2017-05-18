@@ -58,10 +58,12 @@ class LocalStore extends Types.IStore {
             rec.timeoutCallback = timeoutCallback;
             this.setupExpire(rec);
             this._store.set(this.keyCode(key), rec);
-            let keysLength = this._keys.push(key);
-            if (this.limit && keysLength > this.limit) {
-                let firstKey = this._keys.shift();
-                this.del(firstKey);
+            this._keys.push(key);
+            if (this.limit && typeof this.limit == 'function') {
+                while (!await this.limit()) {
+                    let firstKey = this._keys.shift();
+                    this.del(firstKey);
+                }
             }
             return rec.value;
         }
@@ -96,7 +98,7 @@ class LocalStore extends Types.IStore {
     async size() {
         return this._keys.length;
     }
-    keys() {
+    async keys() {
         return this._keys;
     }
 }

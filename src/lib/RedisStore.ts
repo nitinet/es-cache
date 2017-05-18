@@ -79,16 +79,17 @@ export default class RedisStore<K, V extends object> extends Types.IStore<K, V> 
 					res(data);
 				});
 			})
-			let keysLength = await this.size();
 
-			if (this.limit && keysLength > this.limit) {
-				let firstKey = await new Promise<string>((res, rej) => {
-					this.client.lpop(this.prefix, (err, data) => {
-						if (err) rej(err);
-						res(data);
+			if (this.limit && typeof this.limit == 'function') {
+				while (!await this.limit()) {
+					let firstKey = await new Promise<string>((res, rej) => {
+						this.client.lpop(this.prefix, (err, data) => {
+							if (err) rej(err);
+							res(data);
+						});
 					});
-				});
-				this.client.del(firstKey);
+					this.client.del(firstKey);
+				}
 			}
 			return true;
 		} catch (error) {
@@ -132,7 +133,7 @@ export default class RedisStore<K, V extends object> extends Types.IStore<K, V> 
 		});
 	}
 
-	keys(): Array<K> {
+	async	keys(): Promise<Array<K>> {
 		return null;
 	}
 }

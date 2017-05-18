@@ -4,7 +4,7 @@ export abstract class IStore<K, V> {
 	valueFunction: StoreCallback<K, V> = null;
 	expire: number = 86400000;
 	timeoutCallback: StoreCallback<K, V> = null;
-	limit: number = null;
+	limit: () => Promise<Boolean> = null;
 
 	constructor() {
 	}
@@ -24,7 +24,7 @@ export abstract class IStore<K, V> {
 	abstract del(key: K): Promise<boolean>;
 	abstract clear(): void;
 	abstract size(): Promise<number>;
-	abstract keys(): Array<K>;
+	abstract keys(): Promise<Array<K>>;
 }
 
 export interface StoreCallback<K, V> {
@@ -35,7 +35,7 @@ export interface IOption<K, V> {
 	valueFunction?: StoreCallback<K, V>;
 	expire?: number;
 	timeoutCallback?: StoreCallback<K, V>;
-	limit?: number;
+	limit?: () => Promise<Boolean>;
 	store?: {
 		type?: string;
 		primitive?: boolean;

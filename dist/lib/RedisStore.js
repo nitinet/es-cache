@@ -77,16 +77,17 @@ class RedisStore extends Types.IStore {
                     res(data);
                 });
             });
-            let keysLength = await this.size();
-            if (this.limit && keysLength > this.limit) {
-                let firstKey = await new Promise((res, rej) => {
-                    this.client.lpop(this.prefix, (err, data) => {
-                        if (err)
-                            rej(err);
-                        res(data);
+            if (this.limit && typeof this.limit == 'function') {
+                while (!await this.limit()) {
+                    let firstKey = await new Promise((res, rej) => {
+                        this.client.lpop(this.prefix, (err, data) => {
+                            if (err)
+                                rej(err);
+                            res(data);
+                        });
                     });
-                });
-                this.client.del(firstKey);
+                    this.client.del(firstKey);
+                }
             }
             return true;
         }
@@ -130,7 +131,7 @@ class RedisStore extends Types.IStore {
             });
         });
     }
-    keys() {
+    async keys() {
         return null;
     }
 }
