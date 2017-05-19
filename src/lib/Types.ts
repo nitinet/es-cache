@@ -10,7 +10,9 @@ export abstract class IStore<K, V> {
 	}
 
 	protected keyCode(key: K | string | number | boolean | symbol): string {
-		if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
+		if (key == null) {
+			return null;
+		} else if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
 			return key.toString();
 		} else {
 			let hash = crypto.createHash('sha256');

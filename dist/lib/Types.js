@@ -9,7 +9,10 @@ class IStore {
         this.limit = null;
     }
     keyCode(key) {
-        if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
+        if (key == null) {
+            return null;
+        }
+        else if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
             return key.toString();
         }
         else {
