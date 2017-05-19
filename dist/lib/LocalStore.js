@@ -60,7 +60,7 @@ class LocalStore extends Types.IStore {
             this._store.set(this.keyCode(key), rec);
             this._keys.push(key);
             if (this.limit && typeof this.limit == 'function') {
-                while (!await this.limit()) {
+                while (await this.limit()) {
                     let firstKey = this._keys.shift();
                     this.del(firstKey);
                 }

@@ -81,7 +81,7 @@ export default class RedisStore<K, V extends object> extends Types.IStore<K, V> 
 			})
 
 			if (this.limit && typeof this.limit == 'function') {
-				while (!await this.limit()) {
+				while (await this.limit()) {
 					let firstKey = await new Promise<string>((res, rej) => {
 						this.client.lpop(this.prefix, (err, data) => {
 							if (err) rej(err);

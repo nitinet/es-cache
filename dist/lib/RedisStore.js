@@ -78,7 +78,7 @@ class RedisStore extends Types.IStore {
                 });
             });
             if (this.limit && typeof this.limit == 'function') {
-                while (!await this.limit()) {
+                while (await this.limit()) {
                     let firstKey = await new Promise((res, rej) => {
                         this.client.lpop(this.prefix, (err, data) => {
                             if (err)
