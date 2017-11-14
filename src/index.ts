@@ -30,8 +30,8 @@ class Cache<K, V extends any> {
     }
   }
 
-  async get(key: K, ...opts): Promise<V> {
-    return this._store.get(key, opts);
+  async get(key: K): Promise<V> {
+    return this._store.get(key);
   }
 
   async put(key: K, val: V, expire?: number, timeoutCallback?: Types.StoreCallback<K, V>): Promise<boolean> {
@@ -50,7 +50,7 @@ class Cache<K, V extends any> {
     return this._store.size();
   }
 
-  async keys(): Promise<Array<any>> {
+  async keys(): Promise<Array<K>> {
     return this._store.keys();
   }
 

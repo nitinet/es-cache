@@ -15,7 +15,7 @@ class RedisStore extends Types.IStore {
         this.client = redis.createClient(option);
         this.primitive = option.primitive ? option.primitive : false;
     }
-    async get(key, ...opts) {
+    async get(key) {
         let s = await new Promise((res, rej) => {
             this.client.hgetall(this.keyCode(key), (err, data) => {
                 if (err)
@@ -35,7 +35,7 @@ class RedisStore extends Types.IStore {
             }
         }
         if (result == null && this.valueFunction) {
-            result = await this.valueFunction(key, opts);
+            result = await this.valueFunction(key);
             this.put(key, result, this.expire, this.timeoutCallback);
         }
         return result;

@@ -21,18 +21,18 @@ class LocalStore extends Types.IStore {
             }, store.expire);
         }
     }
-    async get(key, ...opts) {
+    async get(key) {
         let s = this._store.get(this.keyCode(key));
         let result = null;
         if (s) {
             if (s.value == null && s.valueFunc) {
-                s.value = await s.valueFunc(s.key, opts);
+                s.value = await s.valueFunc(s.key);
                 this.setupExpire(s);
             }
             result = s.value;
         }
         if (result == null && this.valueFunction) {
-            result = await this.valueFunction(key, opts);
+            result = await this.valueFunction(key);
             this.put(key, result, this.expire, this.timeoutCallback);
         }
         return result;

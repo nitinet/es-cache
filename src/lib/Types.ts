@@ -21,7 +21,7 @@ export abstract class IStore<K, V> {
 		}
 	}
 
-	abstract get(key: K, ...opts): Promise<V>;
+	abstract get(key: K): Promise<V>;
 	abstract put(key: K, val: V, expire?: number, timeoutCallback?: StoreCallback<K, V>): Promise<boolean>;
 	abstract del(key: K): Promise<boolean>;
 	abstract clear(): void;

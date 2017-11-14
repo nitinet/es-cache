@@ -17,7 +17,7 @@ export default class RedisStore<K, V extends object> extends Types.IStore<K, V> 
 		this.primitive = option.primitive ? option.primitive : false;
 	}
 
-	async get(key: K, ...opts): Promise<V> {
+	async get(key: K): Promise<V> {
 		let s = await new Promise<Array<string>>((res, rej) => {
 			this.client.hgetall(this.keyCode(key), (err, data) => {
 				if (err) rej(err);
@@ -35,7 +35,7 @@ export default class RedisStore<K, V extends object> extends Types.IStore<K, V> 
 			}
 		}
 		if (result == null && this.valueFunction) {
-			result = await this.valueFunction(key, opts);
+			result = await this.valueFunction(key);
 			this.put(key, result, this.expire, this.timeoutCallback);
 		}
 		return result;
