@@ -8,16 +8,14 @@ class RedisStore extends Types.IStore {
         this.host = null;
         this.prefix = null;
         this.client = null;
-        this.primitive = false;
         this.host = option.host = option.host ? option.host : "localhost";
         this.port = option.port = option.port ? option.port : 6379;
         this.prefix = option.prefix ? option.prefix : "cache" + (Math.random() * 1000).toFixed(0);
         this.client = redis.createClient(option);
-        this.primitive = option.primitive ? option.primitive : false;
     }
     async get(key) {
         let s = await new Promise((res, rej) => {
-            this.client.hgetall(this.keyCode(key), (err, data) => {
+            this.client.hget(this.keyCode(key), (err, data) => {
                 if (err)
                     rej(err);
                 res(data);
@@ -25,14 +23,7 @@ class RedisStore extends Types.IStore {
         });
         let result = null;
         if (s) {
-            for (let i = 0; i < s.length; i = i + 2) {
-                if (this.primitive) {
-                    result[s[i]] = s[i + 1];
-                }
-                else {
-                    result[s[i]] = JSON.parse(s[i + 1]);
-                }
-            }
+            result = JSON.parse(s);
         }
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);
@@ -48,23 +39,15 @@ class RedisStore extends Types.IStore {
             if (timeoutCallback && typeof timeoutCallback !== 'function') {
                 throw new Error('Cache timeout callback must be a function');
             }
-            if (val && typeof val === 'function') {
+            if (val == null) {
+                throw new Error('Value cannot be a null');
+            }
+            else if (typeof val === 'function') {
                 throw new Error('Value cannot be a function');
             }
-            let data = new Array();
-            let propKeys = Reflect.ownKeys(val);
-            for (let i = 0, j = 0; i < propKeys.length; i++, j += 2) {
-                let prop = propKeys[i];
-                data[j] = prop.toString();
-                if (this.primitive) {
-                    data[j + 1] = Reflect.get(val, prop);
-                }
-                else {
-                    data[j + 1] = JSON.stringify(Reflect.get(val, prop));
-                }
-            }
+            let data = JSON.stringify(val);
             await new Promise((resolve, rej) => {
-                this.client.hmset(this.keyCode(key), data, (err, res) => {
+                this.client.set(this.keyCode(key), data, (err, res) => {
                     if (err)
                         rej(err);
                     resolve(res);
