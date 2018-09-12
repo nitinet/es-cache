@@ -1,14 +1,15 @@
-import * as Types from './Types';
+import IStore from './IStore';
+import * as types from '../types';
 
-export default class LocalStore<K, V> extends Types.IStore<K, V> {
-	_store: Map<string, Types.StoreValue<K, V>> = new Map<string, Types.StoreValue<K, V>>();
+export default class Local<K, V> extends IStore<K, V> {
+	_store: Map<string, types.StoreValue<K, V>> = new Map<string, types.StoreValue<K, V>>();
 	_keys: Array<K> = new Array<K>();
 
 	constructor() {
 		super();
 	}
 
-	private setupExpire(store: Types.StoreValue<K, V>) {
+	private setupExpire(store: types.StoreValue<K, V>) {
 		let that = this;
 		if (store.expire) {
 			store.timeout = setTimeout(function () {
@@ -40,7 +41,7 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 		return result;
 	}
 
-	async put(key: K, val: V, expire?: number, timeoutCallback?: Types.StoreCallback<K, V>): Promise<boolean> {
+	async put(key: K, val: V, expire?: number, timeoutCallback?: types.StoreCallback<K, V>): Promise<boolean> {
 		try {
 			if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
 				throw new Error("timeout is not a number or less then 0");
@@ -50,14 +51,13 @@ export default class LocalStore<K, V> extends Types.IStore<K, V> {
 				throw new Error('Cache timeout callback must be a function');
 			}
 
-			let rec: Types.StoreValue<K, V> = new Types.StoreValue();
-			rec.key = key;
-			if (val && typeof val === 'function') {
-				rec.valueFunc = val;
-				rec.value = await rec.valueFunc(rec.key);
-			} else {
-				rec.value = val;
+			if (val == null) {
+				throw new Error('Value cannot be a null');
 			}
+
+			let rec: types.StoreValue<K, V> = new types.StoreValue();
+			rec.key = key;
+			rec.value = val;
 			rec.expire = expire;
 			rec.timeoutCallback = timeoutCallback;
 			this.setupExpire(rec);

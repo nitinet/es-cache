@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Types = require("./Types");
-class LocalStore extends Types.IStore {
+const IStore_1 = require("./IStore");
+const types = require("../types");
+class Local extends IStore_1.default {
     constructor() {
         super();
         this._store = new Map();
@@ -45,15 +46,12 @@ class LocalStore extends Types.IStore {
             if (timeoutCallback && typeof timeoutCallback !== 'function') {
                 throw new Error('Cache timeout callback must be a function');
             }
-            let rec = new Types.StoreValue();
+            if (val == null) {
+                throw new Error('Value cannot be a null');
+            }
+            let rec = new types.StoreValue();
             rec.key = key;
-            if (val && typeof val === 'function') {
-                rec.valueFunc = val;
-                rec.value = await rec.valueFunc(rec.key);
-            }
-            else {
-                rec.value = val;
-            }
+            rec.value = val;
             rec.expire = expire;
             rec.timeoutCallback = timeoutCallback;
             this.setupExpire(rec);
@@ -102,4 +100,4 @@ class LocalStore extends Types.IStore {
         return this._keys;
     }
 }
-exports.default = LocalStore;
+exports.default = Local;

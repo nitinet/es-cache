@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Types = require("./Types");
 const redis = require("redis");
-class RedisStore extends Types.IStore {
+const IStore_1 = require("./IStore");
+class Redis extends IStore_1.default {
     constructor(option) {
         super();
         this.host = null;
@@ -41,9 +41,6 @@ class RedisStore extends Types.IStore {
             }
             if (val == null) {
                 throw new Error('Value cannot be a null');
-            }
-            else if (typeof val === 'function') {
-                throw new Error('Value cannot be a function');
             }
             let data = JSON.stringify(val);
             await new Promise((resolve, rej) => {
@@ -118,4 +115,4 @@ class RedisStore extends Types.IStore {
         return null;
     }
 }
-exports.default = RedisStore;
+exports.default = Redis;

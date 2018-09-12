@@ -22,15 +22,4 @@ class IStore {
         }
     }
 }
-exports.IStore = IStore;
-class StoreValue {
-    constructor() {
-        this.key = null;
-        this.value = null;
-        this.valueFunc = null;
-        this.expire = null;
-        this.timeout = null;
-        this.timeoutCallback = null;
-    }
-}
-exports.StoreValue = StoreValue;
+exports.default = IStore;

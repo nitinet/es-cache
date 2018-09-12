@@ -1,33 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const LocalStore_1 = require("./lib/LocalStore");
-const RedisStore_1 = require("./lib/RedisStore");
+const types = require("./types");
+const store = require("./store");
 class Cache {
     constructor(options) {
         this._store = null;
-        if (options) {
-            if (options.store) {
-                switch (options.store.type) {
-                    case 'redis': {
-                        this._store = new RedisStore_1.default(options.store);
-                        break;
-                    }
-                    default:
-                        this._store = new LocalStore_1.default();
-                        break;
-                }
-            }
-            else {
-                this._store = new LocalStore_1.default();
-            }
-            this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
-            this._store.expire = options.expire ? options.expire : null;
-            this._store.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
-            this._store.limit = options.limit ? options.limit : null;
+        options = options || {};
+        options.store = options.store || { storeType: 'local' };
+        switch (options.store.storeType) {
+            case types.StoreType[types.StoreType.local]:
+                this._store = new store.Local();
+                break;
+            case types.StoreType[types.StoreType.redis]:
+                this._store = new store.Redis(options.store);
+                break;
+            default:
+                this._store = new store.Local();
+                break;
         }
-        else {
-            this._store = new LocalStore_1.default();
-        }
+        this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
+        this._store.expire = options.expire ? options.expire : null;
+        this._store.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
+        this._store.limit = options.limit ? options.limit : null;
     }
     async get(key) {
         return this._store.get(key);

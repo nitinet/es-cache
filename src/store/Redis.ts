@@ -1,13 +1,15 @@
-import * as Types from './Types';
 import * as redis from 'redis';
 
-export default class RedisStore<K, V> extends Types.IStore<K, V> {
+import IStore from './IStore';
+import * as types from '../types';
+
+export default class Redis<K, V> extends IStore<K, V> {
 	host: string = null;
 	port: number;
 	prefix: string = null;
 	client: redis.RedisClient = null;
 
-	constructor(option: redis.ClientOpts & { primitive?: boolean }) {
+	constructor(option: redis.ClientOpts) {
 		super();
 		this.host = option.host = option.host ? option.host : "localhost";
 		this.port = option.port = option.port ? option.port : 6379;
@@ -33,7 +35,7 @@ export default class RedisStore<K, V> extends Types.IStore<K, V> {
 		return result;
 	}
 
-	async put(key: K, val: V, expire?: number, timeoutCallback?: Types.StoreCallback<K, V>): Promise<boolean> {
+	async put(key: K, val: V, expire?: number, timeoutCallback?: types.StoreCallback<K, V>): Promise<boolean> {
 		try {
 			if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
 				throw new Error("timeout is not a number or less then 0");
@@ -45,8 +47,6 @@ export default class RedisStore<K, V> extends Types.IStore<K, V> {
 
 			if (val == null) {
 				throw new Error('Value cannot be a null');
-			} else if (typeof val === 'function') {
-				throw new Error('Value cannot be a function');
 			}
 
 			let data = JSON.stringify(val);

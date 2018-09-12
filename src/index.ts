@@ -1,40 +1,38 @@
-import * as Types from './lib/Types';
-import LocalStore from './lib/LocalStore';
-import RedisStore from './lib/RedisStore';
+import * as types from './types';
+import * as store from './store';
 
 class Cache<K, V extends any> {
-  private _store: Types.IStore<K, V> = null;
+  private _store: store.IStore<K, V> = null;
 
-  constructor(options?: Types.IOption<K, V>) {
-    if (options) {
-      if (options.store) {
-        switch (options.store.type) {
-          case 'redis': {
-            this._store = new RedisStore<K, V>(options.store);
-            break;
-          }
-          default:
-            this._store = new LocalStore<K, V>();
-            break;
-        }
-      } else {
-        this._store = new LocalStore<K, V>();
-      }
+  constructor(options?: types.IOption<K, V>) {
+    options = options || {};
+    options.store = options.store || { storeType: 'local' };
 
-      this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
-      this._store.expire = options.expire ? options.expire : null;
-      this._store.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
-      this._store.limit = options.limit ? options.limit : null;
-    } else {
-      this._store = new LocalStore<K, V>();
+    switch (options.store.storeType) {
+      case types.StoreType[types.StoreType.local]:
+        this._store = new store.Local<K, V>();
+        break;
+
+      case types.StoreType[types.StoreType.redis]:
+        this._store = new store.Redis<K, V>(options.store);
+        break;
+
+      default:
+        this._store = new store.Local<K, V>();
+        break;
     }
+
+    this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
+    this._store.expire = options.expire ? options.expire : null;
+    this._store.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
+    this._store.limit = options.limit ? options.limit : null;
   }
 
   async get(key: K): Promise<V> {
     return this._store.get(key);
   }
 
-  async put(key: K, val: V, expire?: number, timeoutCallback?: Types.StoreCallback<K, V>): Promise<boolean> {
+  async put(key: K, val: V, expire?: number, timeoutCallback?: types.StoreCallback<K, V>): Promise<boolean> {
     return this._store.put(key, val, expire, timeoutCallback);
   }
 
