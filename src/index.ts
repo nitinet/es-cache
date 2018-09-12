@@ -6,15 +6,15 @@ class Cache<K, V extends any> {
 
   constructor(options?: types.IOption<K, V>) {
     options = options || {};
-    options.store = options.store || { storeType: 'local' };
+    options.storeType = options.storeType || 'local';
 
-    switch (options.store.storeType) {
+    switch (options.storeType) {
       case types.StoreType[types.StoreType.local]:
         this._store = new store.Local<K, V>();
         break;
 
       case types.StoreType[types.StoreType.redis]:
-        this._store = new store.Redis<K, V>(options.store);
+        this._store = new store.Redis<K, V>(options.redisConfig);
         break;
 
       default:

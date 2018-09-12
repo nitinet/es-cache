@@ -6,13 +6,13 @@ class Cache {
     constructor(options) {
         this._store = null;
         options = options || {};
-        options.store = options.store || { storeType: 'local' };
-        switch (options.store.storeType) {
+        options.storeType = options.storeType || 'local';
+        switch (options.storeType) {
             case types.StoreType[types.StoreType.local]:
                 this._store = new store.Local();
                 break;
             case types.StoreType[types.StoreType.redis]:
-                this._store = new store.Redis(options.store);
+                this._store = new store.Redis(options.redisConfig);
                 break;
             default:
                 this._store = new store.Local();

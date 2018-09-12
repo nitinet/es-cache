@@ -1,6 +1,6 @@
 {
   "name": "es-cache",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "A simple in-memory cache on ecmascript 6 and typescript.",
   "main": "./dist/index.js",
   "types": "./types/index.d.ts",
@@ -22,7 +22,8 @@
     "url": "https://github.com/InHeap/es-cache/issues"
   },
   "homepage": "https://github.com/InHeap/es-cache#readme",
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "redis": "*"
   }
 }

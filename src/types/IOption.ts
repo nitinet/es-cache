@@ -7,7 +7,8 @@ interface IOption<K, V> {
 	expire?: number;
 	timeoutCallback?: StoreCallback<K, V>;
 	limit?: () => Promise<Boolean>;
-	store?: { storeType?: string; } & redis.ClientOpts
+	storeType?: string;
+	redisConfig?: redis.ClientOpts;
 }
 
 export default IOption;
