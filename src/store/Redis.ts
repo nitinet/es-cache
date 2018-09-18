@@ -4,22 +4,21 @@ import IStore from './IStore';
 import * as types from '../types';
 
 export default class Redis<K, V> extends IStore<K, V> {
-	host: string = null;
-	port: number;
-	prefix: string = null;
-	client: redis.RedisClient = null;
+	private prefix: string = null;
+	private client: redis.RedisClient = null;
 
 	constructor(option: redis.ClientOpts) {
 		super();
-		this.host = option.host = option.host ? option.host : "localhost";
-		this.port = option.port = option.port ? option.port : 6379;
-		this.prefix = option.prefix ? option.prefix : "cache" + (Math.random() * 1000).toFixed(0);
+		option.host = option.host ? option.host : 'localhost';
+		option.port = option.port ? option.port : 6379;
+		option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+		this.prefix = option.prefix + '-keys';
 		this.client = redis.createClient(option);
 	}
 
 	async get(key: K): Promise<V> {
 		let s = await new Promise<string>((res, rej) => {
-			this.client.hget(this.keyCode(key), (err, data) => {
+			this.client.get(this.keyCode(key), (err, data) => {
 				if (err) rej(err);
 				res(data);
 			});
@@ -30,7 +29,9 @@ export default class Redis<K, V> extends IStore<K, V> {
 		}
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);
-			this.put(key, result, this.expire, this.timeoutCallback);
+			if (result == null) {
+				this.put(key, result, this.expire, this.timeoutCallback);
+			}
 		}
 		return result;
 	}
@@ -38,7 +39,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 	async put(key: K, val: V, expire?: number, timeoutCallback?: types.StoreCallback<K, V>): Promise<boolean> {
 		try {
 			if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
-				throw new Error("timeout is not a number or less then 0");
+				throw new Error('timeout is not a number or less then 0');
 			}
 
 			if (timeoutCallback && typeof timeoutCallback !== 'function') {
@@ -51,12 +52,15 @@ export default class Redis<K, V> extends IStore<K, V> {
 
 			let data = JSON.stringify(val);
 
-			await new Promise<any>((resolve, rej) => {
-				this.client.set(this.keyCode(key), data, (err, res) => {
+			await new Promise<any>((res, rej) => {
+				this.client.set(this.keyCode(key), data, (err, result) => {
 					if (err) rej(err);
-					resolve(res);
+					res(result);
 				});
 			});
+			if (this.expire) {
+				this.client.expire(this.keyCode(key), (this.expire / 1000));
+			}
 
 			// Removing Overlimit element
 			await new Promise<any>((res, rej) => {
