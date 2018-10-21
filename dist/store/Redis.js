@@ -27,7 +27,7 @@ class Redis extends IStore_1.default {
         }
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);
-            if (result == null) {
+            if (result != null) {
                 this.put(key, result, this.expire, this.timeoutCallback);
             }
         }

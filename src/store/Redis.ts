@@ -29,7 +29,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 		}
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);
-			if (result == null) {
+			if (result != null) {
 				this.put(key, result, this.expire, this.timeoutCallback);
 			}
 		}
