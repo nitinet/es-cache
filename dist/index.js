@@ -12,7 +12,7 @@ class Cache {
                 this._store = new store.Local();
                 break;
             case types.StoreType[types.StoreType.redis]:
-                this._store = new store.Redis(options.redisConfig);
+                this._store = new store.Redis(options.storeConfig);
                 break;
             default:
                 this._store = new store.Local();

@@ -1,5 +1,3 @@
-import * as redis from 'redis';
-
 import StoreCallback from './StoreCallback';
 
 interface IOption<K, V> {
@@ -8,7 +6,7 @@ interface IOption<K, V> {
 	timeoutCallback?: StoreCallback<K, V>;
 	limit?: () => Promise<Boolean>;
 	storeType?: string;
-	redisConfig?: redis.ClientOpts;
+	storeConfig?: any;
 }
 
 export default IOption;

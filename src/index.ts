@@ -14,7 +14,7 @@ class Cache<K, V extends any> {
         break;
 
       case types.StoreType[types.StoreType.redis]:
-        this._store = new store.Redis<K, V>(options.redisConfig);
+        this._store = new store.Redis<K, V>(options.storeConfig);
         break;
 
       default:

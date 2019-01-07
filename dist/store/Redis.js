@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const redis = require("redis");
 const IStore_1 = require("./IStore");
 class Redis extends IStore_1.default {
     constructor(option) {
@@ -11,6 +10,7 @@ class Redis extends IStore_1.default {
         option.port = option.port ? option.port : 6379;
         option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
         this.prefix = option.prefix + '-keys';
+        let redis = require('redis');
         this.client = redis.createClient(option);
     }
     async get(key) {

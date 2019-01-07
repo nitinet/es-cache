@@ -1,18 +1,21 @@
-import * as redis from 'redis';
+// import * as redis from 'redis';
 
 import IStore from './IStore';
 import * as types from '../types';
 
 export default class Redis<K, V> extends IStore<K, V> {
 	private prefix: string = null;
-	private client: redis.RedisClient = null;
+	// private client: redis.RedisClient = null;
+	private client = null;
 
-	constructor(option: redis.ClientOpts) {
+	constructor(option) {
 		super();
 		option.host = option.host ? option.host : 'localhost';
 		option.port = option.port ? option.port : 6379;
 		option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
 		this.prefix = option.prefix + '-keys';
+
+		let redis = require('redis');
 		this.client = redis.createClient(option);
 	}
 
