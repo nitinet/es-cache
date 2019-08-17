@@ -14,6 +14,9 @@ class Cache {
             case types.StoreType[types.StoreType.redis]:
                 this._store = new store.Redis(options.storeConfig);
                 break;
+            case types.StoreType[types.StoreType.memcache]:
+                this._store = new store.Memcache(options.storeConfig);
+                break;
             default:
                 this._store = new store.Local();
                 break;

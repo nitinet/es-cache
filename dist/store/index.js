@@ -6,3 +6,5 @@ const Local_1 = require("./Local");
 exports.Local = Local_1.default;
 const Redis_1 = require("./Redis");
 exports.Redis = Redis_1.default;
+const Memcache_1 = require("./Memcache");
+exports.Memcache = Memcache_1.default;

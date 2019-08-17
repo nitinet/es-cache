@@ -17,6 +17,10 @@ class Cache<K, V extends any> {
         this._store = new store.Redis<K, V>(options.storeConfig);
         break;
 
+      case types.StoreType[types.StoreType.memcache]:
+        this._store = new store.Memcache<K, V>(options.storeConfig);
+        break;
+
       default:
         this._store = new store.Local<K, V>();
         break;

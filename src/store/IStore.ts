@@ -11,7 +11,7 @@ abstract class IStore<K, V> {
 	constructor() {
 	}
 
-	protected keyCode(key: K | string | number | boolean | symbol): string {
+	protected keyCode(key: K): string {
 		if (key == null) {
 			return null;
 		} else if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {

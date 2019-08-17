@@ -5,7 +5,7 @@ declare abstract class IStore<K, V> {
     timeoutCallback: StoreCallback<K, V>;
     limit: () => Promise<Boolean>;
     constructor();
-    protected keyCode(key: K | string | number | boolean | symbol): string;
+    protected keyCode(key: K): string;
     abstract get(key: K): Promise<V>;
     abstract put(key: K, val: V, expire?: number, timeoutCallback?: StoreCallback<K, V>): Promise<boolean>;
     abstract del(key: K): Promise<boolean>;

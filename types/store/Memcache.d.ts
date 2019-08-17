@@ -1,7 +1,6 @@
 import IStore from './IStore';
 import * as types from '../types';
-export default class Redis<K, V> extends IStore<K, V> {
-    private prefix;
+export default class Memcache<K, V> extends IStore<K, V> {
     private client;
     constructor(option: any);
     init(option: any): Promise<void>;

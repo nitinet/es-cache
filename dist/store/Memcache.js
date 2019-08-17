@@ -1,20 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const IStore_1 = require("./IStore");
-class Redis extends IStore_1.default {
+class Memcache extends IStore_1.default {
     constructor(option) {
         super();
-        this.prefix = null;
         this.client = null;
         option.host = option.host || 'localhost';
-        option.port = option.port || 6379;
+        option.port = option.port || 11211;
         option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
-        this.prefix = option.prefix + '-keys';
         this.init(option);
     }
     async init(option) {
-        let redis = await Promise.resolve().then(() => require('redis'));
-        this.client = redis.createClient(option);
+        let memcached = await Promise.resolve().then(() => require('memcached'));
+        this.client = new memcached.default(`${option.host}:${option.port}`, option);
     }
     async get(key) {
         let s = await new Promise((res, rej) => {
@@ -49,34 +47,12 @@ class Redis extends IStore_1.default {
             }
             let data = JSON.stringify(val);
             await new Promise((res, rej) => {
-                this.client.set(this.keyCode(key), data, (err, result) => {
+                this.client.set(this.keyCode(key), data, (this.expire / 1000), (err, result) => {
                     if (err)
                         rej(err);
                     res(result);
                 });
             });
-            if (this.expire) {
-                this.client.expire(this.keyCode(key), (this.expire / 1000));
-            }
-            await new Promise((res, rej) => {
-                this.client.lpush(this.prefix, this.keyCode(key), (err, data) => {
-                    if (err)
-                        rej(err);
-                    res(data);
-                });
-            });
-            if (this.limit && typeof this.limit == 'function') {
-                while (await this.limit()) {
-                    let firstKey = await new Promise((res, rej) => {
-                        this.client.lpop(this.prefix, (err, data) => {
-                            if (err)
-                                rej(err);
-                            res(data);
-                        });
-                    });
-                    this.client.del(firstKey);
-                }
-            }
             return true;
         }
         catch (error) {
@@ -89,38 +65,22 @@ class Redis extends IStore_1.default {
             return false;
         }
         let hashKey = this.keyCode(key);
-        await new Promise((res, rej) => {
-            this.client.lrem(this.prefix, hashKey, (err, data) => {
+        return await new Promise((res, rej) => {
+            return this.client.del(hashKey, (err) => {
                 if (err)
                     rej(err);
-                res(data);
+                res(true);
             });
         });
-        return this.client.del(hashKey);
     }
     async clear() {
-        let keys = await new Promise((res, rej) => {
-            this.client.lrange(this.prefix, 0, -1, (err, data) => {
-                if (err)
-                    rej(err);
-                res(data);
-            });
-        });
-        for (let key of keys) {
-            this.client.del(key);
-        }
+        return null;
     }
     async size() {
-        return await new Promise((res, rej) => {
-            this.client.llen(this.prefix, (err, data) => {
-                if (err)
-                    rej(err);
-                res(data);
-            });
-        });
+        return null;
     }
     async keys() {
         return null;
     }
 }
-exports.default = Redis;
+exports.default = Memcache;
