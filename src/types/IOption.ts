@@ -1,4 +1,5 @@
 import StoreCallback from './StoreCallback';
+import IEntityType from '../util/IEntityType';
 
 interface IOption<K, V> {
 	valueFunction?: StoreCallback<K, V>;
@@ -7,6 +8,7 @@ interface IOption<K, V> {
 	limit?: () => Promise<Boolean>;
 	storeType?: string;
 	storeConfig?: any;
+	valueType?: IEntityType<V>;
 }
 
 export default IOption;

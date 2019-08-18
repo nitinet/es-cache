@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const IStore_1 = require("./IStore");
+const JsonParse_1 = require("../util/JsonParse");
 class Redis extends IStore_1.default {
     constructor(option) {
         super();
@@ -17,7 +18,7 @@ class Redis extends IStore_1.default {
         this.client = redis.createClient(option);
     }
     async get(key) {
-        let s = await new Promise((res, rej) => {
+        let json = await new Promise((res, rej) => {
             this.client.get(this.keyCode(key), (err, data) => {
                 if (err)
                     rej(err);
@@ -25,8 +26,13 @@ class Redis extends IStore_1.default {
             });
         });
         let result = null;
-        if (s) {
-            result = JSON.parse(s);
+        if (json) {
+            if (this.valueType) {
+                result = JsonParse_1.default(json, this.valueType);
+            }
+            else {
+                result = JSON.parse(json);
+            }
         }
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);

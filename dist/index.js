@@ -21,10 +21,11 @@ class Cache {
                 this._store = new store.Local();
                 break;
         }
-        this._store.valueFunction = options.valueFunction ? options.valueFunction : null;
-        this._store.expire = options.expire ? options.expire : null;
-        this._store.timeoutCallback = options.timeoutCallback ? options.timeoutCallback : null;
-        this._store.limit = options.limit ? options.limit : null;
+        this._store.valueFunction = options.valueFunction || null;
+        this._store.expire = options.expire || null;
+        this._store.timeoutCallback = options.timeoutCallback || null;
+        this._store.limit = options.limit || null;
+        this._store.valueType = options.valueType || null;
     }
     async get(key) {
         return this._store.get(key);

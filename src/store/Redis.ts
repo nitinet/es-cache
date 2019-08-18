@@ -2,6 +2,7 @@
 
 import IStore from './IStore';
 import * as types from '../types';
+import JsonParse from '../util/JsonParse';
 
 export default class Redis<K, V> extends IStore<K, V> {
 	private prefix: string = null;
@@ -24,15 +25,19 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async get(key: K): Promise<V> {
-		let s = await new Promise<string>((res, rej) => {
+		let json = await new Promise<string>((res, rej) => {
 			this.client.get(this.keyCode(key), (err, data) => {
 				if (err) rej(err);
 				res(data);
 			});
 		})
 		let result = null;
-		if (s) {
-			result = JSON.parse(s);
+		if (json) {
+			if (this.valueType) {
+				result = JsonParse(json, this.valueType);
+			} else {
+				result = JSON.parse(json);
+			}
 		}
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);

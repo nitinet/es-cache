@@ -1,12 +1,14 @@
 import * as crypto from 'crypto';
 
 import StoreCallback from '../types/StoreCallback';
+import IEntityType from '../util/IEntityType';
 
 abstract class IStore<K, V> {
 	valueFunction: StoreCallback<K, V> = null;
 	expire: number = 86400000;
 	timeoutCallback: StoreCallback<K, V> = null;
 	limit: () => Promise<Boolean> = null;
+	valueType: IEntityType<V> = null;
 
 	constructor() {
 	}

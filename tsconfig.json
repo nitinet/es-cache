@@ -7,8 +7,6 @@
 		"allowSyntheticDefaultImports": true,
 		"removeComments": true,
 		"outDir": "./dist",
-		"declaration": true,
-		"declarationDir": "./types",
 		"typeRoots": [
 			"./typings/globals/",
 			"./typings/modules/"

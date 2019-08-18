@@ -7,6 +7,7 @@ class IStore {
         this.expire = 86400000;
         this.timeoutCallback = null;
         this.limit = null;
+        this.valueType = null;
     }
     keyCode(key) {
         if (key == null) {
