@@ -8,21 +8,18 @@ function JsonParse<T>(json: string, type: IEntityType<T>): T {
 }
 
 function fill<T>(obj: any, type: IEntityType<T>): T {
-	let res;
+	let res = null;
 
 	if (obj == null) {
-		res = null;
 	} else if (Array.isArray(obj)) {
 		res = [];
-		for (let i = 0; i < obj.length; i++) {
-			let val = obj[i];
+		obj.forEach((val, i) => {
 			res[i] = val;
-		}
+		});
 	} else if (typeof obj == 'object') {
 		let keys = Reflect.ownKeys(obj);
 		res = new type();
-		for (let i = 0; i < keys.length; i++) {
-			let key = keys[i];
+		keys.forEach(key => {
 			let val = obj[key];
 			if (isPrimitive(res[key])) {
 				res[key] = val;
@@ -30,7 +27,7 @@ function fill<T>(obj: any, type: IEntityType<T>): T {
 				let propType: IEntityType<any> = res[key].constructor;
 				res[key] = fill(val, propType);
 			}
-		}
+		});
 	} else {
 		res = new type(obj);
 	}

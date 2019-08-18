@@ -6,22 +6,19 @@ function JsonParse(json, type) {
     return res;
 }
 function fill(obj, type) {
-    let res;
+    let res = null;
     if (obj == null) {
-        res = null;
     }
     else if (Array.isArray(obj)) {
         res = [];
-        for (let i = 0; i < obj.length; i++) {
-            let val = obj[i];
+        obj.forEach((val, i) => {
             res[i] = val;
-        }
+        });
     }
     else if (typeof obj == 'object') {
         let keys = Reflect.ownKeys(obj);
         res = new type();
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
+        keys.forEach(key => {
             let val = obj[key];
             if (isPrimitive(res[key])) {
                 res[key] = val;
@@ -30,7 +27,7 @@ function fill(obj, type) {
                 let propType = res[key].constructor;
                 res[key] = fill(val, propType);
             }
-        }
+        });
     }
     else {
         res = new type(obj);
