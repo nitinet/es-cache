@@ -17,6 +17,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 	}
 
 	async	init(option) {
+		// @ts-ignore
 		let memcached = await import('memcached');
 		this.client = new memcached.default(`${option.host}:${option.port}`, option);
 	}

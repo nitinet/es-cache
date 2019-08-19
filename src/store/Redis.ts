@@ -20,6 +20,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async	init(option) {
+		// @ts-ignore
 		let redis = await import('redis');
 		this.client = redis.createClient(option);
 	}
