@@ -22,9 +22,13 @@
     "url": "https://github.com/InHeap/es-cache/issues"
   },
   "homepage": "https://github.com/InHeap/es-cache#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@types/node": "^12.7.4"
+  },
   "peerDependencies": {
+    "@types/memcached": "^2.2.6",
+    "@types/redis": "^2.8.13",
     "memcached": "^2.2.2",
-    "redis": "*"
+    "redis": "^2.8.0"
   }
 }
