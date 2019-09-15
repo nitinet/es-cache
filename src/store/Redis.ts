@@ -1,20 +1,20 @@
-// import * as redis from 'redis';
+import * as redis from 'redis';
 
 import IStore from './IStore';
 import * as types from '../types';
 import JsonParse from '../util/JsonParse';
 
 export default class Redis<K, V> extends IStore<K, V> {
-	private prefix: string = null;
-	// private client: redis.RedisClient = null;
-	private client = null;
+	private keyPrefix: string = null;
+	private client: redis.RedisClient = null;
+	// private client = null;
 
 	constructor(option) {
 		super();
 		option.host = option.host || 'localhost';
 		option.port = option.port || 6379;
 		option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
-		this.prefix = option.prefix + '-keys';
+		this.keyPrefix = '-keys';
 
 		this.init(option);
 	}
@@ -77,7 +77,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 
 			// Removing Overlimit element
 			await new Promise<any>((res, rej) => {
-				this.client.lpush(this.prefix, this.keyCode(key), (err, data) => {
+				this.client.lpush(this.keyPrefix, this.keyCode(key), (err, data) => {
 					if (err) rej(err);
 					res(data);
 				});
@@ -86,7 +86,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 			if (this.limit && typeof this.limit == 'function') {
 				while (await this.limit()) {
 					let firstKey = await new Promise<string>((res, rej) => {
-						this.client.lpop(this.prefix, (err, data) => {
+						this.client.lpop(this.keyPrefix, (err, data) => {
 							if (err) rej(err);
 							res(data);
 						});
@@ -107,7 +107,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 		}
 		let hashKey = this.keyCode(key);
 		await new Promise<any>((res, rej) => {
-			this.client.lrem(this.prefix, hashKey, (err, data) => {
+			this.client.lrem(this.keyPrefix, 0, hashKey, (err, data) => {
 				if (err) rej(err);
 				res(data);
 			});
@@ -117,7 +117,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 
 	async clear(): Promise<void> {
 		let keys = await new Promise<Array<string>>((res, rej) => {
-			this.client.lrange(this.prefix, 0, -1, (err, data) => {
+			this.client.lrange(this.keyPrefix, 0, -1, (err, data) => {
 				if (err) rej(err);
 				res(data);
 			});
@@ -129,7 +129,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 
 	async size(): Promise<number> {
 		return await new Promise<number>((res, rej) => {
-			this.client.llen(this.prefix, (err, data) => {
+			this.client.llen(this.keyPrefix, (err, data) => {
 				if (err) rej(err);
 				res(data);
 			});
