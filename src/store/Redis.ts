@@ -1,4 +1,4 @@
-import * as redis from 'redis';
+// import * as redis from 'redis';
 
 import IStore from './IStore';
 import * as types from '../types';
@@ -6,8 +6,8 @@ import JsonParse from '../util/JsonParse';
 
 export default class Redis<K, V> extends IStore<K, V> {
 	private keyPrefix: string = null;
-	private client: redis.RedisClient = null;
-	// private client = null;
+	// private client: redis.RedisClient = null;
+	private client = null;
 
 	constructor(option) {
 		super();
