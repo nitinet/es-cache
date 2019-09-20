@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const IStore_1 = require("./IStore");
-const JsonParse_1 = require("../util/JsonParse");
+const utils = require("@inheap/utils");
 class Redis extends IStore_1.default {
     constructor(option) {
         super();
@@ -28,7 +28,8 @@ class Redis extends IStore_1.default {
         let result = null;
         if (json) {
             if (this.valueType) {
-                result = JsonParse_1.default(json, this.valueType);
+                let obj = JSON.parse(json);
+                result = utils.objectParse(obj, this.valueType);
             }
             else {
                 result = JSON.parse(json);

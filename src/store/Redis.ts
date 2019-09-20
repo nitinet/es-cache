@@ -2,7 +2,7 @@
 
 import IStore from './IStore';
 import * as types from '../types';
-import JsonParse from '../util/JsonParse';
+import * as utils from '@inheap/utils';
 
 export default class Redis<K, V> extends IStore<K, V> {
 	private keyPrefix: string = null;
@@ -35,7 +35,8 @@ export default class Redis<K, V> extends IStore<K, V> {
 		let result = null;
 		if (json) {
 			if (this.valueType) {
-				result = JsonParse(json, this.valueType);
+				let obj = JSON.parse(json);
+				result = utils.objectParse(obj, this.valueType);
 			} else {
 				result = JSON.parse(json);
 			}
