@@ -3,7 +3,7 @@
 		"target": "es2017",
 		"module": "commonjs",
 		"moduleResolution": "node",
-		"sourceMap": false,
+		"sourceMap": true,
 		"allowSyntheticDefaultImports": true,
 		"removeComments": true,
 		"incremental": true,

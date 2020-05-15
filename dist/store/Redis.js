@@ -131,3 +131,4 @@ class Redis extends IStore_1.default {
     }
 }
 exports.default = Redis;
+//# sourceMappingURL=Redis.js.map

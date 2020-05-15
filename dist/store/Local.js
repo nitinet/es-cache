@@ -103,3 +103,4 @@ class Local extends IStore_1.default {
     }
 }
 exports.default = Local;
+//# sourceMappingURL=Local.js.map

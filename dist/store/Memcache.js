@@ -84,3 +84,4 @@ class Memcache extends IStore_1.default {
     }
 }
 exports.default = Memcache;
+//# sourceMappingURL=Memcache.js.map

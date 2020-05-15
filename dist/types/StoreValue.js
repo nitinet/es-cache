@@ -11,3 +11,4 @@ class StoreValue {
     }
 }
 exports.default = StoreValue;
+//# sourceMappingURL=StoreValue.js.map
