@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class StoreValue {
     constructor() {
         this.key = null;
@@ -10,5 +8,5 @@ class StoreValue {
         this.timeoutCallback = null;
     }
 }
-exports.default = StoreValue;
+export default StoreValue;
 //# sourceMappingURL=StoreValue.js.map

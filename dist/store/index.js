@@ -1,11 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const IStore_1 = require("./IStore");
-exports.IStore = IStore_1.default;
-const Local_1 = require("./Local");
-exports.Local = Local_1.default;
-const Redis_1 = require("./Redis");
-exports.Redis = Redis_1.default;
-const Memcache_1 = require("./Memcache");
-exports.Memcache = Memcache_1.default;
+import IStore from './IStore';
+import Local from './Local';
+import Redis from './Redis';
+import Memcache from './Memcache';
+export { IStore };
+export { Local };
+export { Redis };
+export { Memcache };
 //# sourceMappingURL=index.js.map

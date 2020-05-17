@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const crypto = require("crypto");
+import * as crypto from 'crypto';
 class IStore {
     constructor() {
         this.valueFunction = null;
@@ -23,5 +21,5 @@ class IStore {
         }
     }
 }
-exports.default = IStore;
+export default IStore;
 //# sourceMappingURL=IStore.js.map
