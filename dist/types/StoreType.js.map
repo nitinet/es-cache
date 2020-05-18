@@ -1,1 +1,1 @@
-{"version":3,"file":"StoreType.js","sourceRoot":"","sources":["../../src/types/StoreType.ts"],"names":[],"mappings":"AAAA,IAAK,SAIJ;AAJD,WAAK,SAAS;IACb,2CAAS,CAAA;IACT,2CAAK,CAAA;IACL,iDAAQ,CAAA;AACT,CAAC,EAJI,SAAS,KAAT,SAAS,QAIb;AAED,eAAe,SAAS,CAAC"}
+{"version":3,"file":"StoreType.js","sourceRoot":"","sources":["../../src/types/StoreType.ts"],"names":[],"mappings":";;AAAA,IAAK,SAIJ;AAJD,WAAK,SAAS;IACb,2CAAS,CAAA;IACT,2CAAK,CAAA;IACL,iDAAQ,CAAA;AACT,CAAC,EAJI,SAAS,KAAT,SAAS,QAIb;AAED,kBAAe,SAAS,CAAC"}

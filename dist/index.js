@@ -1,5 +1,7 @@
-import * as types from './types';
-import * as store from './store';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const types = require("./types");
+const store = require("./store");
 class Cache {
     constructor(options) {
         this._store = null;
@@ -51,5 +53,5 @@ class Cache {
         });
     }
 }
-export { Cache };
+exports.Cache = Cache;
 //# sourceMappingURL=index.js.map

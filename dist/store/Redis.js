@@ -1,6 +1,8 @@
-import IStore from './IStore';
-import * as utils from '@inheap/utils';
-export default class Redis extends IStore {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const IStore_1 = require("./IStore");
+const utils = require("@inheap/utils");
+class Redis extends IStore_1.default {
     constructor(option) {
         super();
         this.keyPrefix = null;
@@ -12,7 +14,7 @@ export default class Redis extends IStore {
         this.init(option);
     }
     async init(option) {
-        let redis = await import('redis');
+        let redis = await Promise.resolve().then(() => require('redis'));
         this.client = redis.createClient(option);
     }
     async get(key) {
@@ -128,4 +130,5 @@ export default class Redis extends IStore {
         return null;
     }
 }
+exports.default = Redis;
 //# sourceMappingURL=Redis.js.map

@@ -1,5 +1,7 @@
-import IStore from './IStore';
-export default class Memcache extends IStore {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const IStore_1 = require("./IStore");
+class Memcache extends IStore_1.default {
     constructor(option) {
         super();
         this.client = null;
@@ -9,7 +11,7 @@ export default class Memcache extends IStore {
         this.init(option);
     }
     async init(option) {
-        let memcached = await import('memcached');
+        let memcached = await Promise.resolve().then(() => require('memcached'));
         this.client = new memcached.default(`${option.host}:${option.port}`, option);
     }
     async get(key) {
@@ -81,4 +83,5 @@ export default class Memcache extends IStore {
         return null;
     }
 }
+exports.default = Memcache;
 //# sourceMappingURL=Memcache.js.map

@@ -1,6 +1,8 @@
-import IStore from './IStore';
-import * as types from '../types';
-export default class Local extends IStore {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const IStore_1 = require("./IStore");
+const types = require("../types");
+class Local extends IStore_1.default {
     constructor() {
         super();
         this._store = new Map();
@@ -100,4 +102,5 @@ export default class Local extends IStore {
         return this._keys;
     }
 }
+exports.default = Local;
 //# sourceMappingURL=Local.js.map
