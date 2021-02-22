@@ -17,9 +17,12 @@ class Memcache extends IStore_1.default {
     async get(key) {
         let s = await new Promise((res, rej) => {
             this.client.get(this.keyCode(key), (err, data) => {
-                if (err)
+                if (err) {
                     rej(err);
-                res(data);
+                }
+                else {
+                    res(data);
+                }
             });
         });
         let result = null;
@@ -45,12 +48,15 @@ class Memcache extends IStore_1.default {
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
-            let data = JSON.stringify(val);
+            let objJson = JSON.stringify(val);
             await new Promise((res, rej) => {
-                this.client.set(this.keyCode(key), data, (this.expire / 1000), (err, result) => {
-                    if (err)
+                this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
+                    if (err) {
                         rej(err);
-                    res(result);
+                    }
+                    else {
+                        res(data);
+                    }
                 });
             });
             return true;
@@ -66,10 +72,13 @@ class Memcache extends IStore_1.default {
         }
         let hashKey = this.keyCode(key);
         return await new Promise((res, rej) => {
-            return this.client.del(hashKey, (err) => {
-                if (err)
+            return this.client.del(hashKey, (err, data) => {
+                if (err) {
                     rej(err);
-                res(true);
+                }
+                else {
+                    res(data);
+                }
             });
         });
     }

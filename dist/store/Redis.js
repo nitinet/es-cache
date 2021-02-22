@@ -20,9 +20,12 @@ class Redis extends IStore_1.default {
     async get(key) {
         let json = await new Promise((res, rej) => {
             this.client.get(this.keyCode(key), (err, data) => {
-                if (err)
+                if (err) {
                     rej(err);
-                res(data);
+                }
+                else {
+                    res(data);
+                }
             });
         });
         let result = null;
@@ -54,12 +57,15 @@ class Redis extends IStore_1.default {
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
-            let data = JSON.stringify(val);
+            let objJson = JSON.stringify(val);
             await new Promise((res, rej) => {
-                this.client.set(this.keyCode(key), data, (err, result) => {
-                    if (err)
+                this.client.set(this.keyCode(key), objJson, (err, data) => {
+                    if (err) {
                         rej(err);
-                    res(result);
+                    }
+                    else {
+                        res(data);
+                    }
                 });
             });
             if (this.expire) {
@@ -67,18 +73,24 @@ class Redis extends IStore_1.default {
             }
             await new Promise((res, rej) => {
                 this.client.lpush(this.keyPrefix, this.keyCode(key), (err, data) => {
-                    if (err)
+                    if (err) {
                         rej(err);
-                    res(data);
+                    }
+                    else {
+                        res(data);
+                    }
                 });
             });
             if (this.limit && typeof this.limit == 'function') {
                 while (await this.limit()) {
                     let firstKey = await new Promise((res, rej) => {
                         this.client.lpop(this.keyPrefix, (err, data) => {
-                            if (err)
+                            if (err) {
                                 rej(err);
-                            res(data);
+                            }
+                            else {
+                                res(data);
+                            }
                         });
                     });
                     this.client.del(firstKey);
@@ -98,9 +110,12 @@ class Redis extends IStore_1.default {
         let hashKey = this.keyCode(key);
         await new Promise((res, rej) => {
             this.client.lrem(this.keyPrefix, 0, hashKey, (err, data) => {
-                if (err)
+                if (err) {
                     rej(err);
-                res(data);
+                }
+                else {
+                    res(data);
+                }
             });
         });
         return this.client.del(hashKey);
@@ -108,9 +123,12 @@ class Redis extends IStore_1.default {
     async clear() {
         let keys = await new Promise((res, rej) => {
             this.client.lrange(this.keyPrefix, 0, -1, (err, data) => {
-                if (err)
+                if (err) {
                     rej(err);
-                res(data);
+                }
+                else {
+                    res(data);
+                }
             });
         });
         for (let key of keys) {
@@ -120,9 +138,12 @@ class Redis extends IStore_1.default {
     async size() {
         return await new Promise((res, rej) => {
             this.client.llen(this.keyPrefix, (err, data) => {
-                if (err)
+                if (err) {
                     rej(err);
-                res(data);
+                }
+                else {
+                    res(data);
+                }
             });
         });
     }

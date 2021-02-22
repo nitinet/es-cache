@@ -5,7 +5,7 @@ interface IOption<K, V> {
 	valueFunction?: StoreCallback<K, V>;
 	expire?: number;
 	timeoutCallback?: StoreCallback<K, V>;
-	limit?: () => Promise<Boolean>;
+	limit?: () => Promise<boolean>;
 	storeType?: string;
 	storeConfig?: any;
 	valueType?: IEntityType<V>;

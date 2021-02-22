@@ -16,7 +16,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		this.init(option);
 	}
 
-	async	init(option) {
+	async init(option) {
 		// @ts-ignore
 		let memcached = await import('memcached');
 		this.client = new memcached.default(`${option.host}:${option.port}`, option);
@@ -25,8 +25,8 @@ export default class Memcache<K, V> extends IStore<K, V> {
 	async get(key: K): Promise<V> {
 		let s = await new Promise<string>((res, rej) => {
 			this.client.get(this.keyCode(key), (err, data) => {
-				if (err) rej(err);
-				res(data);
+				if (err) { rej(err); }
+				else { res(data); }
 			});
 		})
 		let result = null;
@@ -56,12 +56,12 @@ export default class Memcache<K, V> extends IStore<K, V> {
 				throw new Error('Value cannot be a null');
 			}
 
-			let data = JSON.stringify(val);
+			let objJson = JSON.stringify(val);
 
 			await new Promise<any>((res, rej) => {
-				this.client.set(this.keyCode(key), data, (this.expire / 1000), (err, result) => {
-					if (err) rej(err);
-					res(result);
+				this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
+					if (err) { rej(err); }
+					else { res(data); }
 				});
 			});
 
@@ -78,9 +78,9 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		}
 		let hashKey = this.keyCode(key);
 		return await new Promise<any>((res, rej) => {
-			return this.client.del(hashKey, (err) => {
-				if (err) rej(err);
-				res(true);
+			return this.client.del(hashKey, (err, data) => {
+				if (err) { rej(err); }
+				else { res(data); }
 			});
 		});
 	}
@@ -93,7 +93,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		return null;
 	}
 
-	async	keys(): Promise<Array<K>> {
+	async keys(): Promise<Array<K>> {
 		return null;
 	}
 }

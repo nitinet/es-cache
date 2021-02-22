@@ -1,6 +1,6 @@
 {
   "name": "es-cache",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A simple in-memory cache on ecmascript 6 and typescript.",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/memcached": "^2.2.6",
-    "@types/node": "^12.7.4",
+    "@types/node": "^14.14.31",
     "@types/redis": "^2.8.13"
   }
 }

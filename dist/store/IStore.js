@@ -19,7 +19,7 @@ class IStore {
         else {
             let hash = crypto.createHash('sha256');
             hash.update(JSON.stringify(key));
-            return hash.digest('latin1');
+            return hash.digest('base64');
         }
     }
 }
