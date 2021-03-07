@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto = require("crypto");
 class IStore {
     constructor() {
         this.valueFunction = null;
@@ -17,9 +16,7 @@ class IStore {
             return key.toString();
         }
         else {
-            let hash = crypto.createHash('sha256');
-            hash.update(JSON.stringify(key));
-            return hash.digest('base64');
+            return JSON.stringify(key);
         }
     }
 }

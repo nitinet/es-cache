@@ -2,26 +2,27 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Cache = void 0;
 const types = require("./types");
-const store = require("./store");
 class Cache {
     constructor(options) {
         this._store = null;
         options = options || {};
         options.storeType = options.storeType || 'local';
+        this.init(options);
+    }
+    async init(options) {
+        let module = null;
         switch (options.storeType) {
             case types.StoreType[types.StoreType.local]:
-                this._store = new store.Local();
+                module = await Promise.resolve().then(() => require('./store/Local'));
                 break;
             case types.StoreType[types.StoreType.redis]:
-                this._store = new store.Redis(options.storeConfig);
+                module = await Promise.resolve().then(() => require('./store/Redis'));
                 break;
             case types.StoreType[types.StoreType.memcache]:
-                this._store = new store.Memcache(options.storeConfig);
-                break;
-            default:
-                this._store = new store.Local();
+                module = await Promise.resolve().then(() => require('./store/Memcache'));
                 break;
         }
+        this._store = new module.default();
         this._store.valueFunction = options.valueFunction || null;
         this._store.expire = options.expire || null;
         this._store.timeoutCallback = options.timeoutCallback || null;

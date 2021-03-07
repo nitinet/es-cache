@@ -1,5 +1,3 @@
-import * as crypto from 'crypto';
-
 import StoreCallback from '../types/StoreCallback';
 import IEntityType from '../util/IEntityType';
 
@@ -19,9 +17,7 @@ abstract class IStore<K, V> {
 		} else if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
 			return key.toString();
 		} else {
-			let hash = crypto.createHash('sha256');
-			hash.update(JSON.stringify(key));
-			return hash.digest('base64');
+			return JSON.stringify(key);
 		}
 	}
 
