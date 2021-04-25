@@ -2,17 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const IStore_1 = require("./IStore");
 class Memcache extends IStore_1.default {
-    constructor(option) {
+    constructor(opts) {
         super();
         this.client = null;
-        option.host = option.host || 'localhost';
-        option.port = option.port || 11211;
-        option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
-        this.init(option);
+        opts = opts || {};
+        opts.host = opts.host || 'localhost';
+        opts.port = opts.port || 11211;
+        opts.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+        this.init(opts);
     }
-    async init(option) {
+    async init(opts) {
         let memcached = await Promise.resolve().then(() => require('memcached'));
-        this.client = new memcached.default(`${option.host}:${option.port}`, option);
+        this.client = new memcached.default(`${opts.host}:${opts.port}`, opts);
     }
     async get(key) {
         let s = await new Promise((res, rej) => {

@@ -3,19 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const IStore_1 = require("./IStore");
 const utils = require("@inheap/utils");
 class Redis extends IStore_1.default {
-    constructor(option) {
+    constructor(opts) {
         super();
         this.keyPrefix = null;
         this.client = null;
-        option.host = option.host || 'localhost';
-        option.port = option.port || 6379;
-        option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+        opts = opts || {};
+        opts.host = opts.host || 'localhost';
+        opts.port = opts.port || 6379;
+        opts.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
         this.keyPrefix = '-keys';
-        this.init(option);
+        this.init(opts);
     }
-    async init(option) {
+    async init(opts) {
         let redis = await Promise.resolve().then(() => require('redis'));
-        this.client = redis.createClient(option);
+        this.client = redis.createClient(opts);
     }
     async get(key) {
         let json = await new Promise((res, rej) => {

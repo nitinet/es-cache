@@ -9,20 +9,21 @@ export default class Redis<K, V> extends IStore<K, V> {
 	// private client: redis.RedisClient = null;
 	private client = null;
 
-	constructor(option) {
+	constructor(opts) {
 		super();
-		option.host = option.host || 'localhost';
-		option.port = option.port || 6379;
-		option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+		opts = opts || {};
+		opts.host = opts.host || 'localhost';
+		opts.port = opts.port || 6379;
+		opts.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
 		this.keyPrefix = '-keys';
 
-		this.init(option);
+		this.init(opts);
 	}
 
-	async init(option) {
+	async init(opts) {
 		// @ts-ignore
 		let redis = await import('redis');
-		this.client = redis.createClient(option);
+		this.client = redis.createClient(opts);
 	}
 
 	async get(key: K): Promise<V> {

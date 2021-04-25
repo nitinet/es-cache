@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Cache = void 0;
 const types = require("./types");
 class Cache {
-    constructor(options) {
+    constructor(opts) {
         this._store = null;
-        options = options || {};
-        options.storeType = options.storeType || 'local';
-        this.init(options);
+        opts = opts || {};
+        opts.storeType = opts.storeType || 'local';
+        this.init(opts);
     }
     async init(options) {
         let module = null;
@@ -22,7 +22,7 @@ class Cache {
                 module = await Promise.resolve().then(() => require('./store/Memcache'));
                 break;
         }
-        this._store = new module.default();
+        this._store = new module.default(options.storeConfig);
         this._store.valueFunction = options.valueFunction || null;
         this._store.expire = options.expire || null;
         this._store.timeoutCallback = options.timeoutCallback || null;

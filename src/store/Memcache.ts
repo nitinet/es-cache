@@ -7,19 +7,20 @@ export default class Memcache<K, V> extends IStore<K, V> {
 	// private client: memcached = null;
 	private client = null;
 
-	constructor(option) {
+	constructor(opts) {
 		super();
-		option.host = option.host || 'localhost';
-		option.port = option.port || 11211;
-		option.prefix = option.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+		opts = opts || {};
+		opts.host = opts.host || 'localhost';
+		opts.port = opts.port || 11211;
+		opts.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
 
-		this.init(option);
+		this.init(opts);
 	}
 
-	async init(option) {
+	async init(opts) {
 		// @ts-ignore
 		let memcached = await import('memcached');
-		this.client = new memcached.default(`${option.host}:${option.port}`, option);
+		this.client = new memcached.default(`${opts.host}:${opts.port}`, opts);
 	}
 
 	async get(key: K): Promise<V> {

@@ -4,11 +4,11 @@ import IStore from './store/IStore';
 class Cache<K, V extends any> {
 	private _store: IStore<K, V> = null;
 
-	constructor(options?: types.IOption<K, V>) {
-		options = options || {};
-		options.storeType = options.storeType || 'local';
+	constructor(opts?: types.IOption<K, V>) {
+		opts = opts || {};
+		opts.storeType = opts.storeType || 'local';
 
-		this.init(options);
+		this.init(opts);
 	}
 
 	private async init(options: types.IOption<K, V>) {
@@ -27,7 +27,7 @@ class Cache<K, V extends any> {
 				break;
 		}
 
-		this._store = new module.default();
+		this._store = new module.default(options.storeConfig);
 
 		this._store.valueFunction = options.valueFunction || null;
 		this._store.expire = options.expire || null;
