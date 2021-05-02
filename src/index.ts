@@ -60,11 +60,13 @@ class Cache<K, V extends any> {
 		return this._store.keys();
 	}
 
-	async forEach(func: (key: K, that: this) => Promise<void>): Promise<void> {
+	async forEach(func: (val: V, key: K, that: this) => Promise<void>) {
 		let that = this;
 		let keys = await this.keys();
-		keys.forEach(async (val) => {
-			await func(val, that);
+		
+		keys.forEach(async (key) => {
+			let val = await this.get(key);
+			await func(val, key, that);
 		});
 	}
 

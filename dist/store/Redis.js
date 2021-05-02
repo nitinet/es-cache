@@ -122,16 +122,7 @@ class Redis extends IStore_1.default {
         return this.client.del(hashKey);
     }
     async clear() {
-        let keys = await new Promise((res, rej) => {
-            this.client.lrange(this.keyPrefix, 0, -1, (err, data) => {
-                if (err) {
-                    rej(err);
-                }
-                else {
-                    res(data);
-                }
-            });
-        });
+        let keys = await this.keys();
         for (let key of keys) {
             this.client.del(key);
         }
@@ -149,7 +140,17 @@ class Redis extends IStore_1.default {
         });
     }
     async keys() {
-        return null;
+        let keys = await new Promise((res, rej) => {
+            this.client.lrange(this.keyPrefix, 0, -1, (err, data) => {
+                if (err) {
+                    rej(err);
+                }
+                else {
+                    res(data);
+                }
+            });
+        });
+        return keys;
     }
 }
 exports.default = Redis;

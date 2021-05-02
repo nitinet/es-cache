@@ -118,12 +118,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async clear(): Promise<void> {
-		let keys = await new Promise<Array<string>>((res, rej) => {
-			this.client.lrange(this.keyPrefix, 0, -1, (err, data) => {
-				if (err) { rej(err); }
-				else { res(data); }
-			});
-		});
+		let keys = await this.keys();
 		for (let key of keys) {
 			this.client.del(key);
 		}
@@ -139,6 +134,13 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async keys(): Promise<Array<K>> {
-		return null;
+		let keys = await new Promise<Array<K>>((res, rej) => {
+			this.client.lrange(this.keyPrefix, 0, -1, (err, data) => {
+				if (err) { rej(err); }
+				else { res(data); }
+			});
+		});
+		return keys;
 	}
+
 }

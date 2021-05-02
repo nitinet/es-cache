@@ -50,8 +50,9 @@ class Cache {
     async forEach(func) {
         let that = this;
         let keys = await this.keys();
-        keys.forEach(async (val) => {
-            await func(val, that);
+        keys.forEach(async (key) => {
+            let val = await this.get(key);
+            await func(val, key, that);
         });
     }
 }
