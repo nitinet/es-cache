@@ -67,7 +67,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 
 			let objJson = JSON.stringify(val);
 
-			await new Promise<any>((res, rej) => {
+			await new Promise<void>((res, rej) => {
 				this.client.set(this.keyCode(key), objJson, (err, data) => {
 					if (err) { rej(err); }
 					else { res(data); }
@@ -78,7 +78,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 			}
 
 			// Removing Overlimit element
-			await new Promise<any>((res, rej) => {
+			await new Promise<void>((res, rej) => {
 				this.client.lpush(this.keyPrefix, this.keyCode(key), (err, data) => {
 					if (err) { rej(err); }
 					else { res(data); }
@@ -108,7 +108,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 			return false;
 		}
 		let hashKey = this.keyCode(key);
-		await new Promise<any>((res, rej) => {
+		await new Promise<void>((res, rej) => {
 			this.client.lrem(this.keyPrefix, 0, hashKey, (err, data) => {
 				if (err) { rej(err); }
 				else { res(data); }
@@ -125,7 +125,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async size(): Promise<number> {
-		return await new Promise<number>((res, rej) => {
+		return new Promise<number>((res, rej) => {
 			this.client.llen(this.keyPrefix, (err, data) => {
 				if (err) { rej(err); }
 				else { res(data); }

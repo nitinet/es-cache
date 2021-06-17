@@ -10,7 +10,7 @@ class IStore {
     }
     keyCode(key) {
         if (key == null) {
-            return null;
+            throw new Error('Invalid Key');
         }
         else if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
             return key.toString();

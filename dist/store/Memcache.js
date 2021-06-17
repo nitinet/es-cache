@@ -72,7 +72,7 @@ class Memcache extends IStore_1.default {
             return false;
         }
         let hashKey = this.keyCode(key);
-        return await new Promise((res, rej) => {
+        return new Promise((res, rej) => {
             return this.client.del(hashKey, (err, data) => {
                 if (err) {
                     rej(err);

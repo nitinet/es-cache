@@ -128,7 +128,7 @@ class Redis extends IStore_1.default {
         }
     }
     async size() {
-        return await new Promise((res, rej) => {
+        return new Promise((res, rej) => {
             this.client.llen(this.keyPrefix, (err, data) => {
                 if (err) {
                     rej(err);

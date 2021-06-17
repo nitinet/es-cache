@@ -8,12 +8,9 @@ abstract class IStore<K, V> {
 	limit: () => Promise<boolean> = null;
 	valueType: IEntityType<V> = null;
 
-	constructor() {
-	}
-
 	protected keyCode(key: K): string {
 		if (key == null) {
-			return null;
+			throw new Error('Invalid Key');
 		} else if (typeof key == 'string' || typeof key == 'number' || typeof key == 'boolean' || typeof key == 'symbol') {
 			return key.toString();
 		} else {

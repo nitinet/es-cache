@@ -59,7 +59,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 
 			let objJson = JSON.stringify(val);
 
-			await new Promise<any>((res, rej) => {
+			await new Promise<void>((res, rej) => {
 				this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
 					if (err) { rej(err); }
 					else { res(data); }
@@ -78,7 +78,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 			return false;
 		}
 		let hashKey = this.keyCode(key);
-		return await new Promise<any>((res, rej) => {
+		return new Promise<boolean>((res, rej) => {
 			return this.client.del(hashKey, (err, data) => {
 				if (err) { rej(err); }
 				else { res(data); }
