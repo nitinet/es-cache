@@ -33,7 +33,7 @@ class Redis extends IStore_1.default {
         if (json) {
             if (this.valueType) {
                 let obj = JSON.parse(json);
-                result = utils.objectParse(obj, this.valueType);
+                result = utils.parseStrict(obj, new this.valueType());
             }
             else {
                 result = JSON.parse(json);
