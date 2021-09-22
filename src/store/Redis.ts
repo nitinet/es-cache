@@ -27,19 +27,31 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async get(key: K): Promise<V> {
-		let json = await new Promise<string>((res, rej) => {
+		let jsonStr = await new Promise<string>((res, rej) => {
 			this.client.get(this.keyCode(key), (err, data) => {
 				if (err) { rej(err); }
 				else { res(data); }
 			});
 		})
 		let result = null;
-		if (json) {
+		if (jsonStr) {
 			if (this.valueType) {
-				let obj = JSON.parse(json);
+				let obj = JSON.parse(jsonStr, (key, value) => {
+					if (typeof value === "string" && /^\d+n$/.test(value)) {
+						return BigInt(value.substr(0, value.length - 1));
+					} else {
+						return value;
+					}
+				});
 				result = utils.parseStrict(obj, new this.valueType());
 			} else {
-				result = JSON.parse(json);
+				result = JSON.parse(jsonStr, (key, value) => {
+					if (typeof value === "string" && /^\d+n$/.test(value)) {
+						return BigInt(value.substr(0, value.length - 1));
+					} else {
+						return value;
+					}
+				});
 			}
 		}
 		if (result == null && this.valueFunction) {
@@ -65,7 +77,13 @@ export default class Redis<K, V> extends IStore<K, V> {
 				throw new Error('Value cannot be a null');
 			}
 
-			let objJson = JSON.stringify(val);
+			let objJson = JSON.stringify(val, (key, value) => {
+				if (typeof value === "bigint") {
+					return value.toString() + 'n';
+				} else {
+					return value
+				}
+			});
 
 			await new Promise<void>((res, rej) => {
 				this.client.set(this.keyCode(key), objJson, (err, data) => {

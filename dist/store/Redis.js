@@ -19,7 +19,7 @@ class Redis extends IStore_1.default {
         this.client = redis.createClient(opts);
     }
     async get(key) {
-        let json = await new Promise((res, rej) => {
+        let jsonStr = await new Promise((res, rej) => {
             this.client.get(this.keyCode(key), (err, data) => {
                 if (err) {
                     rej(err);
@@ -30,13 +30,27 @@ class Redis extends IStore_1.default {
             });
         });
         let result = null;
-        if (json) {
+        if (jsonStr) {
             if (this.valueType) {
-                let obj = JSON.parse(json);
+                let obj = JSON.parse(jsonStr, (key, value) => {
+                    if (typeof value === "string" && /^\d+n$/.test(value)) {
+                        return BigInt(value.substr(0, value.length - 1));
+                    }
+                    else {
+                        return value;
+                    }
+                });
                 result = utils.parseStrict(obj, new this.valueType());
             }
             else {
-                result = JSON.parse(json);
+                result = JSON.parse(jsonStr, (key, value) => {
+                    if (typeof value === "string" && /^\d+n$/.test(value)) {
+                        return BigInt(value.substr(0, value.length - 1));
+                    }
+                    else {
+                        return value;
+                    }
+                });
             }
         }
         if (result == null && this.valueFunction) {
@@ -58,7 +72,14 @@ class Redis extends IStore_1.default {
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
-            let objJson = JSON.stringify(val);
+            let objJson = JSON.stringify(val, (key, value) => {
+                if (typeof value === "bigint") {
+                    return value.toString() + 'n';
+                }
+                else {
+                    return value;
+                }
+            });
             await new Promise((res, rej) => {
                 this.client.set(this.keyCode(key), objJson, (err, data) => {
                     if (err) {

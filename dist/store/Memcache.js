@@ -16,7 +16,7 @@ class Memcache extends IStore_1.default {
         this.client = new memcached.default(`${opts.host}:${opts.port}`, opts);
     }
     async get(key) {
-        let s = await new Promise((res, rej) => {
+        let jsonStr = await new Promise((res, rej) => {
             this.client.get(this.keyCode(key), (err, data) => {
                 if (err) {
                     rej(err);
@@ -27,8 +27,15 @@ class Memcache extends IStore_1.default {
             });
         });
         let result = null;
-        if (s) {
-            result = JSON.parse(s);
+        if (jsonStr) {
+            result = JSON.parse(jsonStr, (key, value) => {
+                if (typeof value === "string" && /^\d+n$/.test(value)) {
+                    return BigInt(value.substr(0, value.length - 1));
+                }
+                else {
+                    return value;
+                }
+            });
         }
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);
@@ -49,7 +56,14 @@ class Memcache extends IStore_1.default {
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
-            let objJson = JSON.stringify(val);
+            let objJson = JSON.stringify(val, (key, value) => {
+                if (typeof value === "bigint") {
+                    return value.toString() + 'n';
+                }
+                else {
+                    return value;
+                }
+            });
             await new Promise((res, rej) => {
                 this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
                     if (err) {

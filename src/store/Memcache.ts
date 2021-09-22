@@ -24,15 +24,21 @@ export default class Memcache<K, V> extends IStore<K, V> {
 	}
 
 	async get(key: K): Promise<V> {
-		let s = await new Promise<string>((res, rej) => {
+		let jsonStr = await new Promise<string>((res, rej) => {
 			this.client.get(this.keyCode(key), (err, data) => {
 				if (err) { rej(err); }
 				else { res(data); }
 			});
 		})
 		let result = null;
-		if (s) {
-			result = JSON.parse(s);
+		if (jsonStr) {
+			result = JSON.parse(jsonStr, (key, value) => {
+				if (typeof value === "string" && /^\d+n$/.test(value)) {
+					return BigInt(value.substr(0, value.length - 1));
+				} else {
+					return value;
+				}
+			});
 		}
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);
@@ -57,7 +63,13 @@ export default class Memcache<K, V> extends IStore<K, V> {
 				throw new Error('Value cannot be a null');
 			}
 
-			let objJson = JSON.stringify(val);
+			let objJson = JSON.stringify(val, (key, value) => {
+				if (typeof value === "bigint") {
+					return value.toString() + 'n';
+				} else {
+					return value
+				}
+			});
 
 			await new Promise<void>((res, rej) => {
 				this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
