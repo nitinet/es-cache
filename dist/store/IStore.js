@@ -19,6 +19,28 @@ class IStore {
             return JSON.stringify(key);
         }
     }
+    JsonParse(jsonStr) {
+        let res = JSON.parse(jsonStr, (key, value) => {
+            if (typeof value === "string" && /^\d+n$/.test(value)) {
+                return BigInt(value.substr(0, value.length - 1));
+            }
+            else {
+                return value;
+            }
+        });
+        return res;
+    }
+    JsonStringify(val) {
+        let res = JSON.stringify(val, (key, value) => {
+            if (typeof value === "bigint") {
+                return value.toString() + 'n';
+            }
+            else {
+                return value;
+            }
+        });
+        return res;
+    }
 }
 exports.default = IStore;
 //# sourceMappingURL=IStore.js.map

@@ -45,7 +45,7 @@ class Cache<K, V extends any> {
 	}
 
 	async del(key: K): Promise<boolean> {
-		return await this._store.del(key);
+		return this._store.del(key);
 	}
 
 	clear(): void {
@@ -56,7 +56,7 @@ class Cache<K, V extends any> {
 		return this._store.size();
 	}
 
-	async keys(): Promise<Array<K>> {
+	async keys(): Promise<K[]> {
 		return this._store.keys();
 	}
 

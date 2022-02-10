@@ -5,52 +5,34 @@ const utils = require("@inheap/utils");
 class Redis extends IStore_1.default {
     constructor(opts) {
         super();
+        this.prefix = null;
         this.keyPrefix = null;
         this.client = null;
-        opts = opts || {};
-        opts.host = opts.host || 'localhost';
-        opts.port = opts.port || 6379;
-        opts.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
-        this.keyPrefix = '-keys';
+        opts = opts || { prefix: null };
+        opts.url = opts.url || 'redis://localhost:6379';
+        this.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+        this.keyPrefix = this.prefix + '-keys';
         this.init(opts);
     }
     async init(opts) {
         let redis = await Promise.resolve().then(() => require('redis'));
         this.client = redis.createClient(opts);
+        await this.client.connect();
+    }
+    keyCode(key) {
+        let keyCode = super.keyCode(key);
+        return this.prefix + keyCode;
     }
     async get(key) {
-        let jsonStr = await new Promise((res, rej) => {
-            this.client.get(this.keyCode(key), (err, data) => {
-                if (err) {
-                    rej(err);
-                }
-                else {
-                    res(data);
-                }
-            });
-        });
+        let jsonStr = await this.client.get(this.keyCode(key));
         let result = null;
         if (jsonStr) {
             if (this.valueType) {
-                let obj = JSON.parse(jsonStr, (key, value) => {
-                    if (typeof value === "string" && /^\d+n$/.test(value)) {
-                        return BigInt(value.substr(0, value.length - 1));
-                    }
-                    else {
-                        return value;
-                    }
-                });
+                let obj = this.JsonParse(jsonStr);
                 result = utils.parseStrict(obj, new this.valueType());
             }
             else {
-                result = JSON.parse(jsonStr, (key, value) => {
-                    if (typeof value === "string" && /^\d+n$/.test(value)) {
-                        return BigInt(value.substr(0, value.length - 1));
-                    }
-                    else {
-                        return value;
-                    }
-                });
+                result = this.JsonParse(jsonStr);
             }
         }
         if (result == null && this.valueFunction) {
@@ -72,50 +54,16 @@ class Redis extends IStore_1.default {
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
-            let objJson = JSON.stringify(val, (key, value) => {
-                if (typeof value === "bigint") {
-                    return value.toString() + 'n';
-                }
-                else {
-                    return value;
-                }
-            });
-            await new Promise((res, rej) => {
-                this.client.set(this.keyCode(key), objJson, (err, data) => {
-                    if (err) {
-                        rej(err);
-                    }
-                    else {
-                        res(data);
-                    }
-                });
-            });
+            let objJson = this.JsonStringify(val);
+            await this.client.set(this.keyCode(key), objJson);
             if (this.expire) {
                 this.client.expire(this.keyCode(key), (this.expire / 1000));
             }
-            await new Promise((res, rej) => {
-                this.client.lpush(this.keyPrefix, this.keyCode(key), (err, data) => {
-                    if (err) {
-                        rej(err);
-                    }
-                    else {
-                        res(data);
-                    }
-                });
-            });
+            await this.client.lPush(this.keyPrefix, super.keyCode(key));
             if (this.limit && typeof this.limit == 'function') {
                 while (await this.limit()) {
-                    let firstKey = await new Promise((res, rej) => {
-                        this.client.lpop(this.keyPrefix, (err, data) => {
-                            if (err) {
-                                rej(err);
-                            }
-                            else {
-                                res(data);
-                            }
-                        });
-                    });
-                    this.client.del(firstKey);
+                    let firstKey = await this.client.lPop(this.keyPrefix);
+                    this.client.del(this.prefix + firstKey);
                 }
             }
             return true;
@@ -129,48 +77,22 @@ class Redis extends IStore_1.default {
         if (!key) {
             return false;
         }
-        let hashKey = this.keyCode(key);
-        await new Promise((res, rej) => {
-            this.client.lrem(this.keyPrefix, 0, hashKey, (err, data) => {
-                if (err) {
-                    rej(err);
-                }
-                else {
-                    res(data);
-                }
-            });
-        });
-        return this.client.del(hashKey);
+        await this.client.lRem(this.keyPrefix, 0, super.keyCode(key));
+        let result = await this.client.del(this.keyCode(key));
+        return !!result;
     }
     async clear() {
         let keys = await this.keys();
         for (let key of keys) {
-            this.client.del(key);
+            this.del(key);
         }
     }
     async size() {
-        return new Promise((res, rej) => {
-            this.client.llen(this.keyPrefix, (err, data) => {
-                if (err) {
-                    rej(err);
-                }
-                else {
-                    res(data);
-                }
-            });
-        });
+        let res = await this.client.lLen(this.keyPrefix);
+        return res;
     }
     async keys() {
-        let keys = await new Promise((res, rej) => {
-            this.client.lrange(this.keyPrefix, 0, -1, (err, data) => {
-                if (err) {
-                    rej(err);
-                }
-                else {
-                    res(data);
-                }
-            });
-        });
+        let keys = await this.client.lRange(this.keyPrefix, 0, -1);
         return keys;
     }
 }

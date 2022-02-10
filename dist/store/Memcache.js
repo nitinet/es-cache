@@ -28,14 +28,7 @@ class Memcache extends IStore_1.default {
         });
         let result = null;
         if (jsonStr) {
-            result = JSON.parse(jsonStr, (key, value) => {
-                if (typeof value === "string" && /^\d+n$/.test(value)) {
-                    return BigInt(value.substr(0, value.length - 1));
-                }
-                else {
-                    return value;
-                }
-            });
+            result = this.JsonParse(jsonStr);
         }
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);
@@ -56,14 +49,7 @@ class Memcache extends IStore_1.default {
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
-            let objJson = JSON.stringify(val, (key, value) => {
-                if (typeof value === "bigint") {
-                    return value.toString() + 'n';
-                }
-                else {
-                    return value;
-                }
-            });
+            let objJson = this.JsonStringify(val);
             await new Promise((res, rej) => {
                 this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
                     if (err) {

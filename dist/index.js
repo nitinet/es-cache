@@ -36,7 +36,7 @@ class Cache {
         return this._store.put(key, val, expire, timeoutCallback);
     }
     async del(key) {
-        return await this._store.del(key);
+        return this._store.del(key);
     }
     clear() {
         this._store.clear();
