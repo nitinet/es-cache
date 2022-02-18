@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Cache = void 0;
-const types = require("./types");
+import * as types from './types';
 class Cache {
     constructor(opts) {
         this._store = null;
@@ -13,13 +10,13 @@ class Cache {
         let module = null;
         switch (options.storeType) {
             case types.StoreType[types.StoreType.local]:
-                module = await Promise.resolve().then(() => require('./store/Local'));
+                module = await import('./store/Local');
                 break;
             case types.StoreType[types.StoreType.redis]:
-                module = await Promise.resolve().then(() => require('./store/Redis'));
+                module = await import('./store/Redis');
                 break;
             case types.StoreType[types.StoreType.memcache]:
-                module = await Promise.resolve().then(() => require('./store/Memcache'));
+                module = await import('./store/Memcache');
                 break;
         }
         this._store = new module.default(options.storeConfig);
@@ -56,5 +53,5 @@ class Cache {
         });
     }
 }
-exports.Cache = Cache;
+export { Cache };
 //# sourceMappingURL=index.js.map

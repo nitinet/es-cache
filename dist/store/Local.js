@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const IStore_1 = require("./IStore");
-const types = require("../types");
-class Local extends IStore_1.default {
+import IStore from './IStore';
+import * as types from '../types';
+export default class Local extends IStore {
     constructor() {
         super();
         this._store = new Map();
@@ -102,5 +100,4 @@ class Local extends IStore_1.default {
         return this._keys;
     }
 }
-exports.default = Local;
 //# sourceMappingURL=Local.js.map

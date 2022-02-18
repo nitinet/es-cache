@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class IStore {
     constructor() {
         this.valueFunction = null;
@@ -42,5 +40,5 @@ class IStore {
         return res;
     }
 }
-exports.default = IStore;
+export default IStore;
 //# sourceMappingURL=IStore.js.map
