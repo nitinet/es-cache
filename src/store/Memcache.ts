@@ -18,8 +18,12 @@ export default class Memcache<K, V> extends IStore<K, V> {
 	}
 
 	async init(opts) {
-		// @ts-ignore
-		let memcached = await import('memcached');
+		let memcached: { default: typeof import('memcached') } = null;
+		try {
+			memcached = await import('memcached');
+		} catch (err) {
+			throw new Error('memcached dependency is missing');
+		}
 		this.client = new memcached.default(`${opts.host}:${opts.port}`, opts);
 	}
 

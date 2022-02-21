@@ -22,8 +22,12 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async init(opts) {
-		// @ts-ignore
-		let redis = await import('redis');
+		let redis: typeof import('redis') = null;
+		try {
+			redis = await import('redis');
+		} catch (err) {
+			throw new Error('Redis dependency is missing');
+		}
 		this.client = redis.createClient(opts);
 		await this.client.connect();
 	}
