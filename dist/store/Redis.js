@@ -13,14 +13,15 @@ export default class Redis extends IStore {
         this.init(opts);
     }
     async init(opts) {
-        let redis = null;
+        let modObj = null;
         try {
-            redis = await import('redis');
+            let modName = 'redis';
+            modObj = await import(modName);
         }
         catch (err) {
             throw new Error('Redis dependency is missing');
         }
-        this.client = redis.createClient(opts);
+        this.client = modObj.createClient(opts);
         await this.client.connect();
     }
     keyCode(key) {

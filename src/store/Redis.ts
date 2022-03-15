@@ -1,4 +1,5 @@
-// import * as redis from 'redis';
+// @ts-ignore
+import * as redis from 'redis';
 
 import IStore from './IStore';
 import * as types from '../types';
@@ -7,11 +8,9 @@ import * as utils from '@inheap/utils';
 export default class Redis<K, V> extends IStore<K, V> {
 	private prefix: string = null;
 	private keyPrefix: string = null;
-	// private client: redis.RedisClientType<any> = null;
-	private client = null;
+	private client: redis.RedisClientType<any> = null;
 
-	// constructor(opts: redis.RedisClientOptions & { prefix: string }) {
-	constructor(opts) {
+	constructor(opts: redis.RedisClientOptions & { prefix: string }) {
 		super();
 		opts = opts || { prefix: null };
 		opts.url = opts.url || 'redis://localhost:6379';
@@ -22,13 +21,15 @@ export default class Redis<K, V> extends IStore<K, V> {
 	}
 
 	async init(opts) {
-		let redis: typeof import('redis') = null;
+		// @ts-ignore
+		let modObj: typeof import('redis') = null;
 		try {
-			redis = await import('redis');
+			let modName = 'redis';
+			modObj = await import(modName);
 		} catch (err) {
 			throw new Error('Redis dependency is missing');
 		}
-		this.client = redis.createClient(opts);
+		this.client = modObj.createClient(opts);
 		await this.client.connect();
 	}
 

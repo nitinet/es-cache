@@ -10,14 +10,15 @@ export default class Memcache extends IStore {
         this.init(opts);
     }
     async init(opts) {
-        let memcached = null;
+        let modObj = null;
         try {
-            memcached = await import('memcached');
+            let modName = 'memcached';
+            modObj = await import(modName);
         }
         catch (err) {
             throw new Error('memcached dependency is missing');
         }
-        this.client = new memcached.default(`${opts.host}:${opts.port}`, opts);
+        this.client = new modObj.default(`${opts.host}:${opts.port}`, opts);
     }
     async get(key) {
         let jsonStr = await new Promise((res, rej) => {

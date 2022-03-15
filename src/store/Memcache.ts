@@ -1,11 +1,11 @@
-// import memcached from 'memcached';
+// @ts-ignore
+import memcached from 'memcached';
 
 import IStore from './IStore';
 import * as types from '../types';
 
 export default class Memcache<K, V> extends IStore<K, V> {
-	// private client: memcached = null;
-	private client = null;
+	private client: memcached = null;
 
 	constructor(opts) {
 		super();
@@ -18,13 +18,15 @@ export default class Memcache<K, V> extends IStore<K, V> {
 	}
 
 	async init(opts) {
-		let memcached: { default: typeof import('memcached') } = null;
+		// @ts-ignore
+		let modObj: { default: typeof import('memcached') } = null;
 		try {
-			memcached = await import('memcached');
+			let modName = 'memcached';
+			modObj = await import(modName);
 		} catch (err) {
 			throw new Error('memcached dependency is missing');
 		}
-		this.client = new memcached.default(`${opts.host}:${opts.port}`, opts);
+		this.client = new modObj.default(`${opts.host}:${opts.port}`, opts);
 	}
 
 	async get(key: K): Promise<V> {
@@ -63,7 +65,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 
 			let objJson = this.JsonStringify(val);
 
-			await new Promise<void>((res, rej) => {
+			await new Promise((res, rej) => {
 				this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
 					if (err) { rej(err); }
 					else { res(data); }
