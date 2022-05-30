@@ -24,8 +24,7 @@ export default class Redis<K, V> extends IStore<K, V> {
 		// @ts-ignore
 		let modObj: typeof import('redis') = null;
 		try {
-			let modName = 'redis';
-			modObj = await import(modName);
+			modObj = await import('redis');
 		} catch (err) {
 			throw new Error('Redis dependency is missing');
 		}

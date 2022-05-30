@@ -1,6 +1,8 @@
-import IStore from './IStore';
-import * as utils from '@inheap/utils';
-export default class Redis extends IStore {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const IStore_1 = require("./IStore");
+const utils = require("@inheap/utils");
+class Redis extends IStore_1.default {
     constructor(opts) {
         super();
         this.prefix = null;
@@ -15,7 +17,7 @@ export default class Redis extends IStore {
     async init(opts) {
         let modObj = null;
         try {
-            modObj = await import('redis');
+            modObj = await Promise.resolve().then(() => require('redis'));
         }
         catch (err) {
             throw new Error('Redis dependency is missing');
@@ -100,4 +102,4 @@ export default class Redis extends IStore {
         return keys;
     }
 }
-//# sourceMappingURL=Redis.js.map
+exports.default = Redis;

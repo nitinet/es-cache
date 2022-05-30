@@ -21,8 +21,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		// @ts-ignore
 		let modObj: { default: typeof import('memcached') } = null;
 		try {
-			let modName = 'memcached';
-			modObj = await import(modName);
+			modObj = await import('memcached');
 		} catch (err) {
 			throw new Error('memcached dependency is missing');
 		}
