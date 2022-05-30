@@ -1,16 +1,15 @@
 {
   "name": "es-cache",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A simple in-memory cache on ecmascript 6 and typescript.",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
-  "type": "module",
   "exports": {
 		"import": "./dist/index.js",
-		"require": "./dist-cj/index.js"
+		"require": "./distCjs/index.js"
 	},
   "scripts": {
-    "build": "tsc -p ./tsconfig.json && tsc -p ./tsconfig-cj.json",
+    "build": "tsc -p ./tsconfig.json & tsc -p ./tsconfig.cjs.json",
     "test": "node test.js"
   },
   "repository": {

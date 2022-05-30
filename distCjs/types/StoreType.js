@@ -7,3 +7,4 @@ var StoreType;
     StoreType[StoreType["memcache"] = 2] = "memcache";
 })(StoreType || (StoreType = {}));
 exports.default = StoreType;
+//# sourceMappingURL=StoreType.js.map

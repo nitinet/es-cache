@@ -43,3 +43,4 @@ class IStore {
     }
 }
 exports.default = IStore;
+//# sourceMappingURL=IStore.js.map
