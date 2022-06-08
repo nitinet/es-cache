@@ -1,4 +1,4 @@
-import * as types from './types';
+import * as types from './types/index.js';
 class Cache {
     constructor(opts) {
         this._store = null;
@@ -10,13 +10,13 @@ class Cache {
         let module = null;
         switch (options.storeType) {
             case types.StoreType[types.StoreType.local]:
-                module = await import('./store/Local');
+                module = await import('./store/Local.js');
                 break;
             case types.StoreType[types.StoreType.redis]:
-                module = await import('./store/Redis');
+                module = await import('./store/Redis.js');
                 break;
             case types.StoreType[types.StoreType.memcache]:
-                module = await import('./store/Memcache');
+                module = await import('./store/Memcache.js');
                 break;
         }
         this._store = new module.default(options.storeConfig);

@@ -1,5 +1,5 @@
-import * as types from './types';
-import IStore from './store/IStore';
+import * as types from './types/index.js';
+import IStore from './store/IStore.js';
 
 class Cache<K, V extends any> {
 	private _store: IStore<K, V> = null;
@@ -15,15 +15,15 @@ class Cache<K, V extends any> {
 		let module = null;
 		switch (options.storeType) {
 			case types.StoreType[types.StoreType.local]:
-				module = await import('./store/Local');
+				module = await import('./store/Local.js');
 				break;
 
 			case types.StoreType[types.StoreType.redis]:
-				module = await import('./store/Redis');
+				module = await import('./store/Redis.js');
 				break;
 
 			case types.StoreType[types.StoreType.memcache]:
-				module = await import('./store/Memcache');
+				module = await import('./store/Memcache.js');
 				break;
 		}
 

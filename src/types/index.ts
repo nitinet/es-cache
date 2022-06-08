@@ -1,7 +1,7 @@
-import IOption from './IOption';
-import StoreCallback from './StoreCallback';
-import StoreType from './StoreType';
-import StoreValue from './StoreValue';
+import IOption from './IOption.js';
+import StoreCallback from './StoreCallback.js';
+import StoreType from './StoreType.js';
+import StoreValue from './StoreValue.js';
 
 export { IOption };
 export { StoreCallback };

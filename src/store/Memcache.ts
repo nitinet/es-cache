@@ -1,8 +1,8 @@
 // @ts-ignore
 import memcached from 'memcached';
 
-import IStore from './IStore';
-import * as types from '../types';
+import IStore from './IStore.js';
+import * as types from '../types/index.js';
 
 export default class Memcache<K, V> extends IStore<K, V> {
 	private client: memcached = null;

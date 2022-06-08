@@ -1,9 +1,9 @@
 // @ts-ignore
 import * as redis from 'redis';
-
-import IStore from './IStore';
-import * as types from '../types';
 import * as utils from '@inheap/utils';
+
+import IStore from './IStore.js';
+import * as types from '../types/index.js';
 
 export default class Redis<K, V> extends IStore<K, V> {
 	private prefix: string = null;

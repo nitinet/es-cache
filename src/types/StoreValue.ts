@@ -1,4 +1,4 @@
-import StoreCallback from './StoreCallback';
+import StoreCallback from './StoreCallback.js';
 
 class StoreValue<K, V> {
 	key: any = null;

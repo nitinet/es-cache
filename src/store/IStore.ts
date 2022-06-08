@@ -1,5 +1,5 @@
-import StoreCallback from '../types/StoreCallback';
-import IEntityType from '../util/IEntityType';
+import StoreCallback from '../types/StoreCallback.js';
+import IEntityType from '../util/IEntityType.js';
 
 abstract class IStore<K, V> {
 	valueFunction: StoreCallback<K, V> = null;

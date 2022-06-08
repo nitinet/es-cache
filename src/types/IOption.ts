@@ -1,5 +1,5 @@
-import StoreCallback from './StoreCallback';
-import IEntityType from '../util/IEntityType';
+import StoreCallback from './StoreCallback.js';
+import IEntityType from '../util/IEntityType.js';
 
 interface IOption<K, V> {
 	valueFunction?: StoreCallback<K, V>;

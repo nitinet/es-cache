@@ -1,4 +1,4 @@
-import IStore from './IStore';
+import IStore from './IStore.js';
 export default class Memcache extends IStore {
     constructor(opts) {
         super();

@@ -1,5 +1,5 @@
-import IStore from './IStore';
-import * as types from '../types';
+import IStore from './IStore.js';
+import * as types from '../types/index.js';
 
 export default class Local<K, V> extends IStore<K, V> {
 	_store: Map<string, types.StoreValue<K, V>> = new Map<string, types.StoreValue<K, V>>();

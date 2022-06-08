@@ -1,5 +1,5 @@
-import IStore from './IStore';
 import * as utils from '@inheap/utils';
+import IStore from './IStore.js';
 export default class Redis extends IStore {
     constructor(opts) {
         super();
