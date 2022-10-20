@@ -10,26 +10,11 @@ export default class Redis<K, V> extends IStore<K, V> {
 	private keyPrefix: string = null;
 	private client: redis.RedisClientType<any> = null;
 
-	constructor(opts: redis.RedisClientOptions & { prefix: string }) {
+	constructor(client: redis.RedisClientType, prefix: string) {
 		super();
-		opts = opts || { prefix: null };
-		opts.url = opts.url || 'redis://localhost:6379';
-		this.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+		this.client = client;
+		this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
 		this.keyPrefix = this.prefix + '-keys';
-
-		this.init(opts);
-	}
-
-	async init(opts) {
-		// @ts-ignore
-		let modObj: typeof import('redis') = null;
-		try {
-			modObj = await import('redis');
-		} catch (err) {
-			throw new Error('Redis dependency is missing');
-		}
-		this.client = modObj.createClient(opts);
-		await this.client.connect();
 	}
 
 	protected keyCode(key: K): string {

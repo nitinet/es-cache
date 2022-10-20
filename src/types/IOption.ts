@@ -7,7 +7,8 @@ interface IOption<K, V> {
 	timeoutCallback?: StoreCallback<K, V>;
 	limit?: () => Promise<boolean>;
 	storeType?: string;
-	storeConfig?: any;
+	client?: any;
+	prefix?: string;
 	valueType?: IEntityType<V>;
 }
 

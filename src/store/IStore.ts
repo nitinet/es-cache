@@ -21,7 +21,7 @@ abstract class IStore<K, V> {
 	protected JsonParse(jsonStr) {
 		let res = JSON.parse(jsonStr, (key, value) => {
 			if (typeof value === "string" && /^\d+n$/.test(value)) {
-				return BigInt(value.substr(0, value.length - 1));
+				return BigInt(value.substring(0, value.length - 1));
 			} else {
 				return value;
 			}

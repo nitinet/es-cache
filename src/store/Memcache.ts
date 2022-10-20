@@ -6,26 +6,17 @@ import * as types from '../types/index.js';
 
 export default class Memcache<K, V> extends IStore<K, V> {
 	private client: memcached = null;
+	private prefix: string = null;
 
-	constructor(opts) {
+	constructor(client: memcached, prefix: string) {
 		super();
-		opts = opts || {};
-		opts.host = opts.host || 'localhost';
-		opts.port = opts.port || 11211;
-		opts.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
-
-		this.init(opts);
+		this.client = client;
+		this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
 	}
 
-	async init(opts) {
-		// @ts-ignore
-		let modObj: { default: typeof import('memcached') } = null;
-		try {
-			modObj = await import('memcached');
-		} catch (err) {
-			throw new Error('memcached dependency is missing');
-		}
-		this.client = new modObj.default(`${opts.host}:${opts.port}`, opts);
+	protected keyCode(key: K): string {
+		let keyCode = super.keyCode(key);
+		return this.prefix + keyCode;
 	}
 
 	async get(key: K): Promise<V> {
@@ -34,7 +25,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 				if (err) { rej(err); }
 				else { res(data); }
 			});
-		})
+		});
 		let result = null;
 		if (jsonStr) {
 			result = this.JsonParse(jsonStr);

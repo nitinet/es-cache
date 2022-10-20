@@ -27,7 +27,7 @@ class Cache<K, V extends any> {
 				break;
 		}
 
-		this._store = new module.default(options.storeConfig);
+		this._store = new module.default(options.client, options.prefix);
 
 		this._store.valueFunction = options.valueFunction || null;
 		this._store.expire = options.expire || null;
