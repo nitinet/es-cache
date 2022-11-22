@@ -1,40 +1,38 @@
 {
-  "name": "es-cache",
-  "version": "1.4.4",
-  "description": "A simple in-memory cache on ecmascript 6 and typescript.",
-  "types": "./src/index.ts",
-  "exports": {
-		"import": "./dist/index.js",
-		"require": "./distCjs/index.js"
+	"name": "es-cache",
+	"version": "1.5.0",
+	"description": "A simple in-memory cache on ecmascript 6 and typescript.",
+	"types": "./src/index.ts",
+	"type": "module",
+	"main": "./dist/index.js",
+	"scripts": {
+		"build": "tsc -p ./tsconfig.json",
+		"test": "node test.js"
 	},
-  "scripts": {
-    "build": "tsc -p ./tsconfig.json & tsc -p ./tsconfig.cjs.json",
-    "test": "node test.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/InHeap/es-cache.git"
-  },
-  "keywords": [
-    "cache",
-    "typescript",
-    "ecmascript 6"
-  ],
-  "author": "Nitin Bansal",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/InHeap/es-cache/issues"
-  },
-  "homepage": "https://github.com/InHeap/es-cache#readme",
-  "dependencies": {
-    "@inheap/utils": "1.0.5"
-  },
-  "devDependencies": {
-    "@types/memcached": "^2.2.7",
-    "@types/node": "^18.0.0"
-  },
-  "optionalDependencies": {
-    "redis": "^4.1.0",
-    "memcached": "^2.2.2"
-  }
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/InHeap/es-cache.git"
+	},
+	"keywords": [
+		"cache",
+		"typescript",
+		"ecmascript 6"
+	],
+	"author": "Nitin Bansal",
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://github.com/InHeap/es-cache/issues"
+	},
+	"homepage": "https://github.com/InHeap/es-cache#readme",
+	"dependencies": {
+		"@inheap/utils": "1.0.5"
+	},
+	"devDependencies": {
+		"@types/memcached": "^2.2.7",
+		"@types/node": "^18.0.0"
+	},
+	"optionalDependencies": {
+		"redis": "^4.1.0",
+		"memcached": "^2.2.2"
+	}
 }
