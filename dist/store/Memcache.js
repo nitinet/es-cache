@@ -1,23 +1,15 @@
 import IStore from './IStore.js';
 export default class Memcache extends IStore {
-    constructor(opts) {
+    constructor(client, prefix) {
         super();
         this.client = null;
-        opts = opts || {};
-        opts.host = opts.host || 'localhost';
-        opts.port = opts.port || 11211;
-        opts.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
-        this.init(opts);
+        this.prefix = null;
+        this.client = client;
+        this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
     }
-    async init(opts) {
-        let modObj = null;
-        try {
-            modObj = await import('memcached');
-        }
-        catch (err) {
-            throw new Error('memcached dependency is missing');
-        }
-        this.client = new modObj.default(`${opts.host}:${opts.port}`, opts);
+    keyCode(key) {
+        let keyCode = super.keyCode(key);
+        return this.prefix + keyCode;
     }
     async get(key) {
         let jsonStr = await new Promise((res, rej) => {

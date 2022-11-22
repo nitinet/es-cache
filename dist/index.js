@@ -19,7 +19,7 @@ class Cache {
                 module = await import('./store/Memcache.js');
                 break;
         }
-        this._store = new module.default(options.storeConfig);
+        this._store = new module.default(options.client, options.prefix);
         this._store.valueFunction = options.valueFunction || null;
         this._store.expire = options.expire || null;
         this._store.timeoutCallback = options.timeoutCallback || null;

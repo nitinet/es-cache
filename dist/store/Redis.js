@@ -1,27 +1,14 @@
 import * as utils from '@inheap/utils';
 import IStore from './IStore.js';
 export default class Redis extends IStore {
-    constructor(opts) {
+    constructor(client, prefix) {
         super();
         this.prefix = null;
         this.keyPrefix = null;
         this.client = null;
-        opts = opts || { prefix: null };
-        opts.url = opts.url || 'redis://localhost:6379';
-        this.prefix = opts.prefix || 'cache' + (Math.random() * 1000).toFixed(0);
+        this.client = client;
+        this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
         this.keyPrefix = this.prefix + '-keys';
-        this.init(opts);
-    }
-    async init(opts) {
-        let modObj = null;
-        try {
-            modObj = await import('redis');
-        }
-        catch (err) {
-            throw new Error('Redis dependency is missing');
-        }
-        this.client = modObj.createClient(opts);
-        await this.client.connect();
     }
     keyCode(key) {
         let keyCode = super.keyCode(key);
