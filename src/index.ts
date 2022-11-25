@@ -72,4 +72,4 @@ class Cache<K, V extends any> {
 
 }
 
-export { Cache };
+export default Cache;

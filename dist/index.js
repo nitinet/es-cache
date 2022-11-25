@@ -53,5 +53,5 @@ class Cache {
         });
     }
 }
-export { Cache };
+export default Cache;
 //# sourceMappingURL=index.js.map
