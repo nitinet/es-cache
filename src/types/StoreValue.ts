@@ -1,12 +1,7 @@
-import StoreCallback from './StoreCallback.js';
-
 class StoreValue<K, V> {
 	key: any = null;
 	value: any = null;
-	valueFunc: StoreCallback<K, V> = null;
-	expire: number = null;
-	timeout: NodeJS.Timer = null;
-	timeoutCallback: StoreCallback<K, V> = null;
+	ttl: number = null;
 }
 
 export default StoreValue;

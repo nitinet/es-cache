@@ -3,9 +3,8 @@ import IEntityType from '../util/IEntityType.js';
 
 interface IOption<K, V> {
 	valueFunction?: StoreCallback<K, V>;
-	expire?: number;
-	timeoutCallback?: StoreCallback<K, V>;
-	limit?: () => Promise<boolean>;
+	ttl?: number;
+	limit?: number;
 	storeType?: string;
 	client?: any;
 	prefix?: string;

@@ -23,30 +23,28 @@ export default class Redis extends IStore {
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);
             if (result != null) {
-                this.put(key, result, this.expire, this.timeoutCallback);
+                this.put(key, result, this.ttl);
             }
         }
         return result;
     }
-    async put(key, val, expire, timeoutCallback) {
+    async put(key, val, ttl) {
         try {
-            if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
-                throw new Error('timeout is not a number or less then 0');
-            }
-            if (timeoutCallback && typeof timeoutCallback !== 'function') {
-                throw new Error('Cache timeout callback must be a function');
-            }
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
+            if (ttl && !(typeof ttl == 'number' || !isNaN(ttl) || ttl <= 0)) {
+                throw new Error('timeout is not a number or less then 0');
+            }
             let objJson = this.JsonStringify(val);
             await this.client.set(this.keyCode(key), objJson);
-            if (this.expire) {
-                this.client.expire(this.keyCode(key), (this.expire / 1000));
-            }
+            ttl = ttl ?? this.ttl;
+            if (ttl)
+                this.client.expire(this.keyCode(key), (ttl / 1000));
             await this.client.lPush(this.keyPrefix, super.keyCode(key));
-            if (this.limit && typeof this.limit == 'function') {
-                while (await this.limit()) {
+            if (this.limit) {
+                let keys = await this.keys();
+                while (this.limit < keys.length) {
                     let firstKey = await this.client.lPop(this.keyPrefix);
                     this.client.del(this.prefix + firstKey);
                 }

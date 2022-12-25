@@ -1,7 +1,6 @@
 class IStore {
     valueFunction = null;
-    expire = 86400000;
-    timeoutCallback = null;
+    ttl = 86400000;
     limit = null;
     valueType = null;
     keyCode(key) {

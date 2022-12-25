@@ -34,20 +34,16 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);
 			if (result != null) {
-				this.put(key, result, this.expire, this.timeoutCallback);
+				this.put(key, result, this.ttl);
 			}
 		}
 		return result;
 	}
 
-	async put(key: K, val: V, expire?: number, timeoutCallback?: types.StoreCallback<K, V>): Promise<boolean> {
+	async put(key: K, val: V, ttl?: number): Promise<boolean> {
 		try {
-			if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
+			if (ttl && !(typeof ttl == 'number' || !isNaN(ttl) || ttl <= 0)) {
 				throw new Error('timeout is not a number or less then 0');
-			}
-
-			if (timeoutCallback && typeof timeoutCallback !== 'function') {
-				throw new Error('Cache timeout callback must be a function');
 			}
 
 			if (val == null) {
@@ -57,7 +53,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 			let objJson = this.JsonStringify(val);
 
 			await new Promise((res, rej) => {
-				this.client.set(this.keyCode(key), objJson, (this.expire / 1000), (err, data) => {
+				this.client.set(this.keyCode(key), objJson, (this.ttl / 1000), (err, data) => {
 					if (err) { rej(err); }
 					else { res(data); }
 				});

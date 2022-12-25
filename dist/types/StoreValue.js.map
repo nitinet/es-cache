@@ -1,1 +1,1 @@
-{"version":3,"file":"StoreValue.js","sourceRoot":"","sources":["../../src/types/StoreValue.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU;IACf,GAAG,GAAQ,IAAI,CAAC;IAChB,KAAK,GAAQ,IAAI,CAAC;IAClB,SAAS,GAAwB,IAAI,CAAC;IACtC,MAAM,GAAW,IAAI,CAAC;IACtB,OAAO,GAAiB,IAAI,CAAC;IAC7B,eAAe,GAAwB,IAAI,CAAC;CAC5C;AAED,eAAe,UAAU,CAAC"}
+{"version":3,"file":"StoreValue.js","sourceRoot":"","sources":["../../src/types/StoreValue.ts"],"names":[],"mappings":"AAAA,MAAM,UAAU;IACf,GAAG,GAAQ,IAAI,CAAC;IAChB,KAAK,GAAQ,IAAI,CAAC;IAClB,GAAG,GAAW,IAAI,CAAC;CACnB;AAED,eAAe,UAAU,CAAC"}

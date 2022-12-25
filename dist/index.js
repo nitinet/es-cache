@@ -21,16 +21,15 @@ class Cache {
         }
         this._store = new module.default(options.client, options.prefix);
         this._store.valueFunction = options.valueFunction || null;
-        this._store.expire = options.expire || null;
-        this._store.timeoutCallback = options.timeoutCallback || null;
+        this._store.ttl = options.ttl || null;
         this._store.limit = options.limit || null;
         this._store.valueType = options.valueType || null;
     }
     async get(key) {
         return this._store.get(key);
     }
-    async put(key, val, expire, timeoutCallback) {
-        return this._store.put(key, val, expire, timeoutCallback);
+    async put(key, val, ttl) {
+        return this._store.put(key, val, ttl);
     }
     async del(key) {
         return this._store.del(key);

@@ -8,43 +8,30 @@ export default class Local extends IStore {
     }
     setupExpire(store) {
         let that = this;
-        if (store.expire) {
-            store.timeout = setTimeout(function () {
-                store.value = null;
-                if (store.timeoutCallback) {
-                    store.timeoutCallback(store.key);
-                }
-                if (!store.valueFunc) {
-                    that.del(store.key);
-                }
-            }, store.expire);
+        if (store.ttl) {
+            setTimeout(function () {
+                that.del(store.key);
+            }, store.ttl);
         }
     }
     async get(key) {
         let s = this._store.get(this.keyCode(key));
         let result = null;
         if (s) {
-            if (s.value == null && s.valueFunc) {
-                s.value = await s.valueFunc(s.key);
-                this.setupExpire(s);
-            }
             result = s.value;
         }
-        if (result == null && this.valueFunction) {
+        else if (this.valueFunction) {
             result = await this.valueFunction(key);
             if (result != null) {
-                this.put(key, result, this.expire, this.timeoutCallback);
+                this.put(key, result, this.ttl);
             }
         }
         return result;
     }
-    async put(key, val, expire, timeoutCallback) {
+    async put(key, val, ttl) {
         try {
-            if (expire && !(typeof expire == 'number' || !isNaN(expire) || expire <= 0)) {
+            if (ttl && !(typeof ttl == 'number' || !isNaN(ttl) || ttl <= 0)) {
                 throw new Error("timeout is not a number or less then 0");
-            }
-            if (timeoutCallback && typeof timeoutCallback !== 'function') {
-                throw new Error('Cache timeout callback must be a function');
             }
             if (val == null) {
                 throw new Error('Value cannot be a null');
@@ -52,13 +39,12 @@ export default class Local extends IStore {
             let rec = new types.StoreValue();
             rec.key = key;
             rec.value = val;
-            rec.expire = expire;
-            rec.timeoutCallback = timeoutCallback;
-            this.setupExpire(rec);
+            rec.ttl = ttl ?? this.ttl;
             this._store.set(this.keyCode(key), rec);
+            this.setupExpire(rec);
             this._keys.push(key);
-            if (this.limit && typeof this.limit == 'function') {
-                while (await this.limit()) {
+            if (this.limit) {
+                while (this.limit < this._keys.length) {
                     let firstKey = this._keys.shift();
                     this.del(firstKey);
                 }
@@ -80,9 +66,6 @@ export default class Local extends IStore {
         }
         let val = this._store.get(this.keyCode(key));
         if (val) {
-            if (val.timeout) {
-                clearTimeout(val.timeout);
-            }
             this._store.delete(this.keyCode(key));
             return true;
         }

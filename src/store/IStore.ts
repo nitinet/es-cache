@@ -3,9 +3,8 @@ import IEntityType from '../util/IEntityType.js';
 
 abstract class IStore<K, V> {
 	valueFunction: StoreCallback<K, V> = null;
-	expire: number = 86400000;
-	timeoutCallback: StoreCallback<K, V> = null;
-	limit: () => Promise<boolean> = null;
+	ttl: number = 86400000;
+	limit: number = null;
 	valueType: IEntityType<V> = null;
 
 	protected keyCode(key: K): string {
@@ -55,7 +54,7 @@ abstract class IStore<K, V> {
 	}
 
 	abstract get(key: K): Promise<V>;
-	abstract put(key: K, val: V, expire?: number, timeoutCallback?: StoreCallback<K, V>): Promise<boolean>;
+	abstract put(key: K, val: V, ttl?: number): Promise<boolean>;
 	abstract del(key: K): Promise<boolean>;
 	abstract clear(): void;
 	abstract size(): Promise<number>;
