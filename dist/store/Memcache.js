@@ -1,9 +1,9 @@
 import IStore from './IStore.js';
 export default class Memcache extends IStore {
+    client = null;
+    prefix = null;
     constructor(client, prefix) {
         super();
-        this.client = null;
-        this.prefix = null;
         this.client = client;
         this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
     }
@@ -24,7 +24,8 @@ export default class Memcache extends IStore {
         });
         let result = null;
         if (jsonStr) {
-            result = this.JsonParse(jsonStr);
+            let temp = this.JsonParse(jsonStr);
+            result = await this.toValueType(temp);
         }
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);

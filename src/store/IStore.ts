@@ -18,7 +18,7 @@ abstract class IStore<K, V> {
 		}
 	}
 
-	protected JsonParse(jsonStr) {
+	protected JsonParse(jsonStr: string) {
 		let res = JSON.parse(jsonStr, (key, value) => {
 			if (typeof value === "string" && /^\d+n$/.test(value)) {
 				return BigInt(value.substring(0, value.length - 1));
@@ -29,7 +29,21 @@ abstract class IStore<K, V> {
 		return res;
 	}
 
-	protected JsonStringify(val) {
+	async toValueType(obj: any) {
+		let res: V = null;
+		if (this.valueType) {
+			try {
+				let transformer = await import('class-transformer');
+				if (transformer)
+					res = transformer.plainToClass(this.valueType, obj, { excludeExtraneousValues: true });
+			} catch (err) {
+				console.error(err);
+			}
+		}
+		return res;
+	}
+
+	protected JsonStringify(val: any) {
 		let res = JSON.stringify(val, (key, value) => {
 			if (typeof value === "bigint") {
 				return value.toString() + 'n';

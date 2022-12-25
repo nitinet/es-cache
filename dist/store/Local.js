@@ -1,10 +1,10 @@
 import IStore from './IStore.js';
 import * as types from '../types/index.js';
 export default class Local extends IStore {
+    _store = new Map();
+    _keys = new Array();
     constructor() {
         super();
-        this._store = new Map();
-        this._keys = new Array();
     }
     setupExpire(store) {
         let that = this;

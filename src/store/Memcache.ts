@@ -26,9 +26,10 @@ export default class Memcache<K, V> extends IStore<K, V> {
 				else { res(data); }
 			});
 		});
-		let result = null;
+		let result: V = null;
 		if (jsonStr) {
-			result = this.JsonParse(jsonStr);
+			let temp = this.JsonParse(jsonStr);
+			result = await this.toValueType(temp);
 		}
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);

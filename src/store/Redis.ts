@@ -1,6 +1,5 @@
 // @ts-ignore
 import * as redis from 'redis';
-import * as utils from '@inheap/utils';
 
 import IStore from './IStore.js';
 import * as types from '../types/index.js';
@@ -25,14 +24,10 @@ export default class Redis<K, V> extends IStore<K, V> {
 	async get(key: K): Promise<V> {
 		let jsonStr = await this.client.get(this.keyCode(key));
 
-		let result = null;
+		let result: V = null;
 		if (jsonStr) {
-			if (this.valueType) {
-				let obj = this.JsonParse(jsonStr);
-				result = utils.parseStrict(obj, new this.valueType());
-			} else {
-				result = this.JsonParse(jsonStr);
-			}
+			let temp = this.JsonParse(jsonStr);
+			result = await this.toValueType(temp);
 		}
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);

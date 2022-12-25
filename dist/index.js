@@ -1,7 +1,7 @@
 import * as types from './types/index.js';
 class Cache {
+    _store = null;
     constructor(opts) {
-        this._store = null;
         opts = opts || {};
         opts.storeType = opts.storeType || 'local';
         this.init(opts);

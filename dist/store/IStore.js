@@ -1,11 +1,9 @@
 class IStore {
-    constructor() {
-        this.valueFunction = null;
-        this.expire = 86400000;
-        this.timeoutCallback = null;
-        this.limit = null;
-        this.valueType = null;
-    }
+    valueFunction = null;
+    expire = 86400000;
+    timeoutCallback = null;
+    limit = null;
+    valueType = null;
     keyCode(key) {
         if (key == null) {
             throw new Error('Invalid Key');
@@ -26,6 +24,20 @@ class IStore {
                 return value;
             }
         });
+        return res;
+    }
+    async toValueType(obj) {
+        let res = null;
+        if (this.valueType) {
+            try {
+                let transformer = await import('class-transformer');
+                if (transformer)
+                    res = transformer.plainToClass(this.valueType, obj, { excludeExtraneousValues: true });
+            }
+            catch (err) {
+                console.error(err);
+            }
+        }
         return res;
     }
     JsonStringify(val) {

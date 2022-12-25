@@ -1,11 +1,10 @@
-import * as utils from '@inheap/utils';
 import IStore from './IStore.js';
 export default class Redis extends IStore {
+    prefix = null;
+    keyPrefix = null;
+    client = null;
     constructor(client, prefix) {
         super();
-        this.prefix = null;
-        this.keyPrefix = null;
-        this.client = null;
         this.client = client;
         this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
         this.keyPrefix = this.prefix + '-keys';
@@ -18,13 +17,8 @@ export default class Redis extends IStore {
         let jsonStr = await this.client.get(this.keyCode(key));
         let result = null;
         if (jsonStr) {
-            if (this.valueType) {
-                let obj = this.JsonParse(jsonStr);
-                result = utils.parseStrict(obj, new this.valueType());
-            }
-            else {
-                result = this.JsonParse(jsonStr);
-            }
+            let temp = this.JsonParse(jsonStr);
+            result = await this.toValueType(temp);
         }
         if (result == null && this.valueFunction) {
             result = await this.valueFunction(key);

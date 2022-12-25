@@ -1,12 +1,10 @@
 class StoreValue {
-    constructor() {
-        this.key = null;
-        this.value = null;
-        this.valueFunc = null;
-        this.expire = null;
-        this.timeout = null;
-        this.timeoutCallback = null;
-    }
+    key = null;
+    value = null;
+    valueFunc = null;
+    expire = null;
+    timeout = null;
+    timeoutCallback = null;
 }
 export default StoreValue;
 //# sourceMappingURL=StoreValue.js.map

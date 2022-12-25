@@ -1,6 +1,6 @@
 {
 	"name": "es-cache",
-	"version": "1.6.0",
+	"version": "1.7.0",
 	"description": "A simple in-memory cache on ecmascript 6 and typescript.",
 	"types": "./src/index.ts",
 	"type": "module",
@@ -24,15 +24,14 @@
 		"url": "https://github.com/InHeap/es-cache/issues"
 	},
 	"homepage": "https://github.com/InHeap/es-cache#readme",
-	"dependencies": {
-		"@inheap/utils": "1.0.5"
-	},
 	"devDependencies": {
 		"@types/memcached": "^2.2.7",
-		"@types/node": "^18.0.0"
+		"@types/node": "^18.11.17"
 	},
 	"optionalDependencies": {
-		"redis": "^4.1.0",
-		"memcached": "^2.2.2"
+		"redis": "^4.5.1",
+		"memcached": "^2.2.2",
+		"reflect-metadata": "0.1.13",
+		"class-transformer": "0.5.1"
 	}
 }
