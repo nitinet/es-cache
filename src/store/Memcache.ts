@@ -2,7 +2,6 @@
 import memcached from 'memcached';
 
 import IStore from './IStore.js';
-import * as types from '../types/index.js';
 
 export default class Memcache<K, V> extends IStore<K, V> {
 	private client: memcached = null;
@@ -21,7 +20,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 
 	async get(key: K): Promise<V> {
 		let jsonStr = await new Promise<string>((res, rej) => {
-			this.client.get(this.keyCode(key), (err, data) => {
+			this.client.get(this.keyCode(key), (err: Error, data: string) => {
 				if (err) { rej(err); }
 				else { res(data); }
 			});
@@ -52,14 +51,12 @@ export default class Memcache<K, V> extends IStore<K, V> {
 
 			let objJson = this.JsonStringify(val);
 
-			await new Promise((res, rej) => {
-				this.client.set(this.keyCode(key), objJson, (this.ttl / 1000), (err, data) => {
+			return await new Promise<boolean>((res, rej) => {
+				this.client.set(this.keyCode(key), objJson, (this.ttl / 1000), (err: Error, data: boolean) => {
 					if (err) { rej(err); }
 					else { res(data); }
 				});
 			});
-
-			return true;
 		} catch (error) {
 			console.log(error);
 			return false;
@@ -72,7 +69,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		}
 		let hashKey = this.keyCode(key);
 		return new Promise<boolean>((res, rej) => {
-			return this.client.del(hashKey, (err, data) => {
+			return this.client.del(hashKey, (err: Error, data: boolean) => {
 				if (err) { rej(err); }
 				else { res(data); }
 			});

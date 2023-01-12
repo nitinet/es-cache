@@ -44,7 +44,7 @@ export default class Memcache extends IStore {
                 throw new Error('Value cannot be a null');
             }
             let objJson = this.JsonStringify(val);
-            await new Promise((res, rej) => {
+            return await new Promise((res, rej) => {
                 this.client.set(this.keyCode(key), objJson, (this.ttl / 1000), (err, data) => {
                     if (err) {
                         rej(err);
@@ -54,7 +54,6 @@ export default class Memcache extends IStore {
                     }
                 });
             });
-            return true;
         }
         catch (error) {
             console.log(error);
