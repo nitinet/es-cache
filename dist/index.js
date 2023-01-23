@@ -1,11 +1,9 @@
 import * as types from './types/index.js';
-import LocalStore from './store/Local.js';
 class Cache {
     _store;
     constructor(opts) {
         opts = opts || {};
         opts.storeType = opts.storeType || 'local';
-        this._store = new LocalStore();
         this.init(opts);
     }
     async init(options) {

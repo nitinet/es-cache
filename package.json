@@ -1,6 +1,6 @@
 {
 	"name": "es-cache",
-	"version": "1.8.0",
+	"version": "1.8.1",
 	"description": "A simple in-memory cache on ecmascript 6 and typescript.",
 	"types": "./src/index.ts",
 	"type": "module",

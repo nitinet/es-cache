@@ -1,14 +1,12 @@
 import * as types from './types/index.js';
 import IStore from './store/IStore.js';
-import LocalStore from './store/Local.js';
 
 class Cache<K, V extends any> {
-	private _store: IStore<K, V>;
+	private _store!: IStore<K, V>;
 
 	constructor(opts?: types.IOption<K, V>) {
 		opts = opts || {};
 		opts.storeType = opts.storeType || 'local';
-		this._store = new LocalStore();
 
 		this.init(opts);
 	}
