@@ -2,10 +2,10 @@ import StoreCallback from '../types/StoreCallback.js';
 import IEntityType from '../util/IEntityType.js';
 
 abstract class IStore<K, V> {
-	valueFunction: StoreCallback<K, V> = null;
+	valueFunction: StoreCallback<K, V> | null = null;
 	ttl: number = 86400000;
-	limit: number = null;
-	valueType: IEntityType<V> = null;
+	limit: number | null = null;
+	valueType: IEntityType<V> | null = null;
 
 	protected keyCode(key: K): string {
 		if (key == null) {
@@ -29,7 +29,7 @@ abstract class IStore<K, V> {
 	}
 
 	async toValueType(obj: any) {
-		let res: V = null;
+		let res: V | null = null;
 		if (this.valueType) {
 			try {
 				let transformer = await import('class-transformer');
@@ -53,7 +53,7 @@ abstract class IStore<K, V> {
 		return res;
 	}
 
-	abstract get(key: K): Promise<V>;
+	abstract get(key: K): Promise<V | null>;
 	abstract put(key: K, val: V, ttl?: number): Promise<boolean>;
 	abstract del(key: K): Promise<boolean>;
 	abstract clear(): void;

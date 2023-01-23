@@ -36,24 +36,22 @@ export default class Local extends IStore {
             if (val == null) {
                 throw new Error('Value cannot be a null');
             }
-            let rec = new types.StoreValue();
-            rec.key = key;
-            rec.value = val;
-            rec.ttl = ttl ?? this.ttl;
+            let rec = new types.StoreValue(key, val, ttl ?? this.ttl);
             this._store.set(this.keyCode(key), rec);
             this.setupExpire(rec);
             this._keys.push(key);
             if (this.limit) {
                 while (this.limit < this._keys.length) {
                     let firstKey = this._keys.shift();
-                    this.del(firstKey);
+                    if (firstKey)
+                        this.del(firstKey);
                 }
             }
             return rec.value;
         }
         catch (error) {
             console.log(error);
-            return null;
+            return false;
         }
     }
     async del(key) {

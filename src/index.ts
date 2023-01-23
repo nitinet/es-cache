@@ -1,18 +1,20 @@
 import * as types from './types/index.js';
 import IStore from './store/IStore.js';
+import LocalStore from './store/Local.js';
 
 class Cache<K, V extends any> {
-	private _store: IStore<K, V> = null;
+	private _store: IStore<K, V>;
 
 	constructor(opts?: types.IOption<K, V>) {
 		opts = opts || {};
 		opts.storeType = opts.storeType || 'local';
+		this._store = new LocalStore();
 
 		this.init(opts);
 	}
 
 	private async init(options: types.IOption<K, V>) {
-		let module = null;
+		let module;
 		switch (options.storeType) {
 			case types.StoreType[types.StoreType.local]:
 				module = await import('./store/Local.js');
@@ -25,18 +27,20 @@ class Cache<K, V extends any> {
 			case types.StoreType[types.StoreType.memcache]:
 				module = await import('./store/Memcache.js');
 				break;
+			default:
+				module = await import('./store/Local.js');
 		}
 
 		this._store = new module.default(options.client, options.prefix);
 
 		this._store.valueFunction = options.valueFunction || null;
-		this._store.ttl = options.ttl || null;
+		this._store.ttl = options.ttl ?? 86400000;
 
 		this._store.limit = options.limit || null;
 		this._store.valueType = options.valueType || null;
 	}
 
-	async get(key: K): Promise<V> {
+	async get(key: K): Promise<V | null> {
 		return this._store.get(key);
 	}
 
@@ -65,8 +69,8 @@ class Cache<K, V extends any> {
 		let keys = await this.keys();
 
 		keys.forEach(async (key) => {
-			let val: V = await this.get(key);
-			await func(val, key, that);
+			let val = await this.get(key);
+			if (val) await func(val, key, that);
 		});
 	}
 

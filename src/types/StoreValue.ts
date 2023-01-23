@@ -1,7 +1,13 @@
 class StoreValue<K, V> {
-	key: any = null;
-	value: any = null;
-	ttl: number = null;
+	key: any;
+	value: any;
+	ttl: number;
+
+	constructor(key: any, value: any, ttl: number) {
+		this.key = key;
+		this.value = value;
+		this.ttl = ttl;
+	}
 }
 
 export default StoreValue;

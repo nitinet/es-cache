@@ -1,8 +1,8 @@
 import IStore from './IStore.js';
 export default class Redis extends IStore {
-    prefix = null;
-    keyPrefix = null;
-    client = null;
+    prefix;
+    keyPrefix;
+    client;
     constructor(client, prefix) {
         super();
         this.client = client;

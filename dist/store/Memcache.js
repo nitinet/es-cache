@@ -1,7 +1,7 @@
 import IStore from './IStore.js';
 export default class Memcache extends IStore {
-    client = null;
-    prefix = null;
+    client;
+    prefix;
     constructor(client, prefix) {
         super();
         this.client = client;
@@ -76,14 +76,8 @@ export default class Memcache extends IStore {
             });
         });
     }
-    async clear() {
-        return null;
-    }
-    async size() {
-        return null;
-    }
-    async keys() {
-        return null;
-    }
+    async clear() { }
+    async size() { return 0; }
+    async keys() { return new Array(); }
 }
 //# sourceMappingURL=Memcache.js.map

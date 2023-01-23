@@ -4,11 +4,11 @@ import * as redis from 'redis';
 import IStore from './IStore.js';
 
 export default class Redis<K, V> extends IStore<K, V> {
-	private prefix: string = null;
-	private keyPrefix: string = null;
-	private client: redis.RedisClientType<any> = null;
+	private prefix: string;
+	private keyPrefix: string;
+	private client: redis.RedisClientType<any>;
 
-	constructor(client: redis.RedisClientType, prefix: string) {
+	constructor(client: redis.RedisClientType, prefix?: string) {
 		super();
 		this.client = client;
 		this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
@@ -20,10 +20,10 @@ export default class Redis<K, V> extends IStore<K, V> {
 		return this.prefix + keyCode;
 	}
 
-	async get(key: K): Promise<V> {
+	async get(key: K): Promise<V | null> {
 		let jsonStr = await this.client.get(this.keyCode(key));
 
-		let result: V = null;
+		let result: V | null = null;
 		if (jsonStr) {
 			let temp = this.JsonParse(jsonStr);
 			result = await this.toValueType(temp);

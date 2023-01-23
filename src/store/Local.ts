@@ -18,9 +18,9 @@ export default class Local<K, V> extends IStore<K, V> {
 		}
 	}
 
-	async get(key: K): Promise<V> {
+	async get(key: K): Promise<V | null> {
 		let s = this._store.get(this.keyCode(key));
-		let result: V = null;
+		let result: V | null = null;
 		if (s) {
 			result = s.value;
 		} else if (this.valueFunction) {
@@ -42,10 +42,7 @@ export default class Local<K, V> extends IStore<K, V> {
 				throw new Error('Value cannot be a null');
 			}
 
-			let rec: types.StoreValue<K, V> = new types.StoreValue();
-			rec.key = key;
-			rec.value = val;
-			rec.ttl = ttl ?? this.ttl;
+			let rec: types.StoreValue<K, V> = new types.StoreValue(key, val, ttl ?? this.ttl);
 			this._store.set(this.keyCode(key), rec);
 			this.setupExpire(rec);
 
@@ -54,13 +51,13 @@ export default class Local<K, V> extends IStore<K, V> {
 			if (this.limit) {
 				while (this.limit < this._keys.length) {
 					let firstKey = this._keys.shift();
-					this.del(firstKey);
+					if (firstKey) this.del(firstKey);
 				}
 			}
 			return rec.value;
 		} catch (error) {
 			console.log(error);
-			return null;
+			return false;
 		}
 	}
 

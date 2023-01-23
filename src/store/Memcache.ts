@@ -4,10 +4,10 @@ import memcached from 'memcached';
 import IStore from './IStore.js';
 
 export default class Memcache<K, V> extends IStore<K, V> {
-	private client: memcached = null;
-	private prefix: string = null;
+	private client: memcached;
+	private prefix: string;
 
-	constructor(client: memcached, prefix: string) {
+	constructor(client: memcached, prefix?: string) {
 		super();
 		this.client = client;
 		this.prefix = prefix ?? 'cache' + (Math.random() * 1000).toFixed(0);
@@ -18,14 +18,14 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		return this.prefix + keyCode;
 	}
 
-	async get(key: K): Promise<V> {
+	async get(key: K): Promise<V | null> {
 		let jsonStr = await new Promise<string>((res, rej) => {
 			this.client.get(this.keyCode(key), (err: Error, data: string) => {
 				if (err) { rej(err); }
 				else { res(data); }
 			});
 		});
-		let result: V = null;
+		let result: V | null = null;
 		if (jsonStr) {
 			let temp = this.JsonParse(jsonStr);
 			result = await this.toValueType(temp);
@@ -76,15 +76,9 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		});
 	}
 
-	async clear(): Promise<void> {
-		return null;
-	}
+	async clear(): Promise<void> { }
 
-	async size(): Promise<number> {
-		return null;
-	}
+	async size(): Promise<number> { return 0; }
 
-	async keys(): Promise<K[]> {
-		return null;
-	}
+	async keys(): Promise<K[]> { return new Array() }
 }
