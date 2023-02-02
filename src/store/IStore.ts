@@ -33,8 +33,7 @@ abstract class IStore<K, V> {
 		if (this.valueType) {
 			try {
 				let transformer = await import('class-transformer');
-				if (transformer)
-					res = transformer.plainToClass(this.valueType, obj, { excludeExtraneousValues: true });
+				if (transformer) res = transformer.plainToClass(this.valueType, obj);
 			} catch (err) {
 				console.error(err);
 			}
