@@ -31,7 +31,7 @@ class IStore {
             try {
                 let transformer = await import('class-transformer');
                 if (transformer)
-                    res = transformer.plainToClass(this.valueType, obj, { excludeExtraneousValues: true });
+                    res = transformer.plainToClass(this.valueType, obj);
             }
             catch (err) {
                 console.error(err);

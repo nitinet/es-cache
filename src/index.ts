@@ -2,13 +2,14 @@ import * as types from './types/index.js';
 import IStore from './store/IStore.js';
 
 class Cache<K, V extends any> {
+	opts: types.IOption<K, V>;
 	private _store!: IStore<K, V>;
 
 	constructor(opts?: types.IOption<K, V>) {
-		opts = opts || {};
-		opts.storeType = opts.storeType || 'local';
+		this.opts = opts || {};
+		this.opts.storeType = this.opts.storeType || 'local';
 
-		this.init(opts);
+		this.init(this.opts);
 	}
 
 	private async init(options: types.IOption<K, V>) {
@@ -40,6 +41,12 @@ class Cache<K, V extends any> {
 
 	async get(key: K): Promise<V | null> {
 		return this._store.get(key);
+	}
+
+	async getOrThrow(key: K): Promise<V> {
+		let val = await this.get(key);
+		if (!val) throw new EvalError(this.opts.errorMsg ?? 'Value Not Found');
+		return val;
 	}
 
 	async put(key: K, val: V, ttl?: number): Promise<boolean> {

@@ -1,10 +1,11 @@
 import * as types from './types/index.js';
 class Cache {
+    opts;
     _store;
     constructor(opts) {
-        opts = opts || {};
-        opts.storeType = opts.storeType || 'local';
-        this.init(opts);
+        this.opts = opts || {};
+        this.opts.storeType = this.opts.storeType || 'local';
+        this.init(this.opts);
     }
     async init(options) {
         let module;
@@ -29,6 +30,12 @@ class Cache {
     }
     async get(key) {
         return this._store.get(key);
+    }
+    async getOrThrow(key) {
+        let val = await this.get(key);
+        if (!val)
+            throw new EvalError(this.opts.errorMsg ?? 'Value Not Found');
+        return val;
     }
     async put(key, val, ttl) {
         return this._store.put(key, val, ttl);

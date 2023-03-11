@@ -8,6 +8,7 @@ interface IOption<K, V> {
 	storeType?: string;
 	client?: any;
 	prefix?: string;
+	errorMsg?: string;
 	valueType?: IEntityType<V>;
 }
 
