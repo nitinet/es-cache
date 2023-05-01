@@ -37,6 +37,8 @@ abstract class IStore<K, V> {
 			} catch (err) {
 				console.error(err);
 			}
+		} else {
+			res = obj;
 		}
 		return res;
 	}

@@ -37,6 +37,9 @@ class IStore {
                 console.error(err);
             }
         }
+        else {
+            res = obj;
+        }
         return res;
     }
     JsonStringify(val) {
