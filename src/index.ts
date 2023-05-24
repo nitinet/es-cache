@@ -1,7 +1,7 @@
 import * as types from './types/index.js';
 import IStore from './store/IStore.js';
 
-class Cache<K, V extends any> {
+class Cache<K, V> {
 	opts: types.IOption<K, V>;
 	private _store!: IStore<K, V>;
 
@@ -35,8 +35,9 @@ class Cache<K, V extends any> {
 		this._store.valueFunction = options.valueFunction || null;
 		this._store.ttl = options.ttl ?? 86400000;
 
-		this._store.limit = options.limit || null;
-		this._store.valueType = options.valueType || null;
+		this._store.limit = options.limit ?? null;
+		this._store.valueType = options.valueType ?? null;
+		if (this._store.valueType) this._store.transformer = await import('class-transformer');
 	}
 
 	async get(key: K): Promise<V | null> {
@@ -47,6 +48,10 @@ class Cache<K, V extends any> {
 		let val = await this.get(key);
 		if (!val) throw new EvalError(this.opts.errorMsg ?? 'Value Not Found');
 		return val;
+	}
+
+	async gets(keys: K[]): Promise<(V | null)[]> {
+		return this._store.gets(keys);
 	}
 
 	async put(key: K, val: V, ttl?: number): Promise<boolean> {
@@ -73,10 +78,10 @@ class Cache<K, V extends any> {
 		let that = this;
 		let keys = await this.keys();
 
-		keys.forEach(async (key) => {
+		await Promise.all(keys.map(async (key) => {
 			let val = await this.get(key);
 			if (val) await func(val, key, that);
-		});
+		}));
 	}
 
 }

@@ -32,6 +32,22 @@ export default class Local<K, V> extends IStore<K, V> {
 		return result;
 	}
 
+	async gets(keys: K[]): Promise<(V | null)[]> {
+		let temp = keys.map(key => this._store.get(this.keyCode(key)));
+		let data = await Promise.all(temp.map(async (s, i) => {
+			let result: V | null = null;
+			if (s) {
+				result = s.value;
+			} else if (this.valueFunction) {
+				let key = keys[i];
+				result = await this.valueFunction(key);
+				if (result != null) this.put(key, result, this.ttl);
+			}
+			return result;
+		}));
+		return data;
+	}
+
 	async put(key: K, val: V, ttl?: number): Promise<boolean> {
 		try {
 			if (ttl && !(typeof ttl == 'number' || !isNaN(ttl) || ttl <= 0)) {

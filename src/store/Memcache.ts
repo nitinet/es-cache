@@ -28,7 +28,7 @@ export default class Memcache<K, V> extends IStore<K, V> {
 		let result: V | null = null;
 		if (jsonStr) {
 			let temp = this.JsonParse(jsonStr);
-			result = await this.toValueType(temp);
+			result = this.toValueType(temp);
 		}
 		if (result == null && this.valueFunction) {
 			result = await this.valueFunction(key);
@@ -37,6 +37,33 @@ export default class Memcache<K, V> extends IStore<K, V> {
 			}
 		}
 		return result;
+	}
+
+	async gets(keys: K[]): Promise<(V | null)[]> {
+		let keyCodes = keys.map(k => this.keyCode(k));
+		let jsonStrs = await new Promise<{ [key: string]: string | null; }>((res, rej) => {
+			this.client.getMulti(keyCodes, (err: Error, data: { [key: string]: string | null; }) => {
+				if (err) { rej(err); }
+				else { res(data); }
+			});
+		});
+		let res = keys.map(k => {
+			let jsonStr = jsonStrs[this.keyCode(k)];
+			if (jsonStr) {
+				let temp = this.JsonParse(jsonStr);
+				return this.toValueType(temp);
+			} else return null;
+		});
+		res = await Promise.all(res.map(async (r, i) => {
+			if (r) return r;
+			else if (this.valueFunction) {
+				let key = keys[i];
+				let temp = await this.valueFunction(key);
+				if (temp != null) this.put(key, temp, this.ttl);
+				return temp;
+			} else return null;
+		}));
+		return res;
 	}
 
 	async put(key: K, val: V, ttl?: number): Promise<boolean> {

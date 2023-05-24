@@ -3,6 +3,7 @@ class IStore {
     ttl = 86400000;
     limit = null;
     valueType = null;
+    transformer = null;
     keyCode(key) {
         if (key == null) {
             throw new Error('Invalid Key');
@@ -25,13 +26,11 @@ class IStore {
         });
         return res;
     }
-    async toValueType(obj) {
+    toValueType(obj) {
         let res = null;
-        if (this.valueType) {
+        if (this.valueType && this.transformer) {
             try {
-                let transformer = await import('class-transformer');
-                if (transformer)
-                    res = transformer.plainToClass(this.valueType, obj);
+                res = this.transformer.plainToClass(this.valueType, obj);
             }
             catch (err) {
                 console.error(err);

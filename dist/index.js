@@ -25,8 +25,10 @@ class Cache {
         this._store = new module.default(options.client, options.prefix);
         this._store.valueFunction = options.valueFunction || null;
         this._store.ttl = options.ttl ?? 86400000;
-        this._store.limit = options.limit || null;
-        this._store.valueType = options.valueType || null;
+        this._store.limit = options.limit ?? null;
+        this._store.valueType = options.valueType ?? null;
+        if (this._store.valueType)
+            this._store.transformer = await import('class-transformer');
     }
     async get(key) {
         return this._store.get(key);
@@ -36,6 +38,9 @@ class Cache {
         if (!val)
             throw new EvalError(this.opts.errorMsg ?? 'Value Not Found');
         return val;
+    }
+    async gets(keys) {
+        return this._store.gets(keys);
     }
     async put(key, val, ttl) {
         return this._store.put(key, val, ttl);
@@ -55,11 +60,11 @@ class Cache {
     async forEach(func) {
         let that = this;
         let keys = await this.keys();
-        keys.forEach(async (key) => {
+        await Promise.all(keys.map(async (key) => {
             let val = await this.get(key);
             if (val)
                 await func(val, key, that);
-        });
+        }));
     }
 }
 export default Cache;

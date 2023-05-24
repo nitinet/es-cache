@@ -7,6 +7,8 @@ abstract class IStore<K, V> {
 	limit: number | null = null;
 	valueType: IEntityType<V> | null = null;
 
+	transformer: typeof import('class-transformer') | null = null;
+
 	protected keyCode(key: K): string {
 		if (key == null) {
 			throw new Error('Invalid Key');
@@ -28,12 +30,11 @@ abstract class IStore<K, V> {
 		return res;
 	}
 
-	async toValueType(obj: any) {
+	toValueType(obj: any) {
 		let res: V | null = null;
-		if (this.valueType) {
+		if (this.valueType && this.transformer) {
 			try {
-				let transformer = await import('class-transformer');
-				if (transformer) res = transformer.plainToClass(this.valueType, obj);
+				res = this.transformer.plainToClass(this.valueType, obj);
 			} catch (err) {
 				console.error(err);
 			}
@@ -55,6 +56,7 @@ abstract class IStore<K, V> {
 	}
 
 	abstract get(key: K): Promise<V | null>;
+	abstract gets(keys: K[]): Promise<(V | null)[]>;
 	abstract put(key: K, val: V, ttl?: number): Promise<boolean>;
 	abstract del(key: K): Promise<boolean>;
 	abstract clear(): void;

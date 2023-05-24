@@ -37,6 +37,24 @@ export default class Redis<K, V> extends IStore<K, V> {
 		return result;
 	}
 
+	async gets(keys: K[]): Promise<(V | null)[]> {
+		let keyCodes = keys.map(k => this.keyCode(k));
+		let jsonStrs = await this.client.mGet(keyCodes);
+		let res = await Promise.all(jsonStrs.map(async (jsonStr, i) => {
+			let result: V | null = null;
+			if (jsonStr) {
+				let temp = this.JsonParse(jsonStr);
+				result = this.toValueType(temp);
+			} else if (this.valueFunction) {
+				let key = keys[i];
+				result = await this.valueFunction(key);
+				if (result != null) this.put(key, result, this.ttl);
+			}
+			return result;
+		}));
+		return res;
+	}
+
 	async put(key: K, val: V, ttl?: number): Promise<boolean> {
 		try {
 			if (val == null) {

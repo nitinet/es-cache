@@ -28,6 +28,23 @@ export default class Local extends IStore {
         }
         return result;
     }
+    async gets(keys) {
+        let temp = keys.map(key => this._store.get(this.keyCode(key)));
+        let data = await Promise.all(temp.map(async (s, i) => {
+            let result = null;
+            if (s) {
+                result = s.value;
+            }
+            else if (this.valueFunction) {
+                let key = keys[i];
+                result = await this.valueFunction(key);
+                if (result != null)
+                    this.put(key, result, this.ttl);
+            }
+            return result;
+        }));
+        return data;
+    }
     async put(key, val, ttl) {
         try {
             if (ttl && !(typeof ttl == 'number' || !isNaN(ttl) || ttl <= 0)) {
