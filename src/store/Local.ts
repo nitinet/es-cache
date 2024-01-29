@@ -5,10 +5,6 @@ export default class Local<K, V> extends IStore<K, V> {
 	_store: Map<string, types.StoreValue<K, V>> = new Map<string, types.StoreValue<K, V>>();
 	_keys: Array<K> = new Array<K>();
 
-	constructor() {
-		super();
-	}
-
 	private setupExpire(store: types.StoreValue<K, V>) {
 		let that = this;
 		if (store.ttl) {
