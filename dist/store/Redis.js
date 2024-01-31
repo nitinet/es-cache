@@ -21,9 +21,14 @@ export default class Redis extends IStore {
             result = await this.toValueType(temp);
         }
         if (result == null && this.valueFunction) {
-            result = await this.valueFunction(key);
-            if (result != null) {
-                this.put(key, result, this.ttl);
+            try {
+                result = await this.valueFunction(key);
+                if (result != null) {
+                    this.put(key, result, this.ttl);
+                }
+            }
+            catch (err) {
+                console.log(err);
             }
         }
         return result;
@@ -39,9 +44,14 @@ export default class Redis extends IStore {
             }
             else if (this.valueFunction) {
                 let key = keys[i];
-                result = await this.valueFunction(key);
-                if (result != null)
-                    this.put(key, result, this.ttl);
+                try {
+                    result = await this.valueFunction(key);
+                    if (result != null)
+                        this.put(key, result, this.ttl);
+                }
+                catch (err) {
+                    console.log(err);
+                }
             }
             return result;
         }));

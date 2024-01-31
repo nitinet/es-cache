@@ -18,29 +18,20 @@ export default class Local extends IStore {
             result = s.value;
         }
         else if (this.valueFunction) {
-            result = await this.valueFunction(key);
-            if (result != null) {
-                this.put(key, result, this.ttl);
+            try {
+                result = await this.valueFunction(key);
+                if (result != null) {
+                    this.put(key, result, this.ttl);
+                }
+            }
+            catch (err) {
+                console.log(err);
             }
         }
         return result;
     }
     async gets(keys) {
-        let temp = keys.map(key => this._store.get(this.keyCode(key)));
-        let data = await Promise.all(temp.map(async (s, i) => {
-            let result = null;
-            if (s) {
-                result = s.value;
-            }
-            else if (this.valueFunction) {
-                let key = keys[i];
-                result = await this.valueFunction(key);
-                if (result != null)
-                    this.put(key, result, this.ttl);
-            }
-            return result;
-        }));
-        return data;
+        return await Promise.all(keys.map(key => this.get(key)));
     }
     async put(key, val, ttl) {
         try {
@@ -63,8 +54,8 @@ export default class Local extends IStore {
             }
             return rec.value;
         }
-        catch (error) {
-            console.log(error);
+        catch (err) {
+            console.log(err);
             return false;
         }
     }

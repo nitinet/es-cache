@@ -6,8 +6,8 @@ class Cache<K, V> {
 	private _store!: IStore<K, V>;
 
 	constructor(opts?: types.IOption<K, V>) {
-		this.opts = opts || {};
-		this.opts.storeType = this.opts.storeType || 'local';
+		this.opts = opts ?? {};
+		this.opts.storeType = this.opts.storeType ?? 'local';
 
 		this.init(this.opts);
 	}
@@ -32,7 +32,7 @@ class Cache<K, V> {
 
 		this._store = new module.default(options.client, options.prefix);
 
-		this._store.valueFunction = options.valueFunction || null;
+		this._store.valueFunction = options.valueFunction ?? null;
 		this._store.ttl = options.ttl ?? 86400000;
 
 		this._store.limit = options.limit ?? null;
@@ -44,7 +44,7 @@ class Cache<K, V> {
 		return this._store.get(key);
 	}
 
-	async getOrThrow(key: K): Promise<V> {
+	async getOrThrow(key: K): Promise<NonNullable<V>> {
 		let val = await this.get(key);
 		if (!val) throw new EvalError(this.opts.errorMsg ?? 'Value Not Found');
 		return val;

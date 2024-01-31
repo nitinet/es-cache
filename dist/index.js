@@ -3,8 +3,8 @@ class Cache {
     opts;
     _store;
     constructor(opts) {
-        this.opts = opts || {};
-        this.opts.storeType = this.opts.storeType || 'local';
+        this.opts = opts ?? {};
+        this.opts.storeType = this.opts.storeType ?? 'local';
         this.init(this.opts);
     }
     async init(options) {
@@ -23,7 +23,7 @@ class Cache {
                 module = await import('./store/Local.js');
         }
         this._store = new module.default(options.client, options.prefix);
-        this._store.valueFunction = options.valueFunction || null;
+        this._store.valueFunction = options.valueFunction ?? null;
         this._store.ttl = options.ttl ?? 86400000;
         this._store.limit = options.limit ?? null;
         this._store.valueType = options.valueType ?? null;

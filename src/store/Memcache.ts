@@ -31,9 +31,13 @@ export default class Memcache<K, V> extends IStore<K, V> {
 			result = this.toValueType(temp);
 		}
 		if (result == null && this.valueFunction) {
-			result = await this.valueFunction(key);
-			if (result != null) {
-				this.put(key, result, this.ttl);
+			try {
+				result = await this.valueFunction(key);
+				if (result != null) {
+					this.put(key, result, this.ttl);
+				}
+			} catch (err) {
+				console.log(err);
 			}
 		}
 		return result;
@@ -47,20 +51,21 @@ export default class Memcache<K, V> extends IStore<K, V> {
 				else { res(data); }
 			});
 		});
-		let res = keys.map(k => {
+		let res = await Promise.all(keys.map(async (k, i) => {
 			let jsonStr = jsonStrs[this.keyCode(k)];
 			if (jsonStr) {
 				let temp = this.JsonParse(jsonStr);
 				return this.toValueType(temp);
-			} else return null;
-		});
-		res = await Promise.all(res.map(async (r, i) => {
-			if (r) return r;
-			else if (this.valueFunction) {
+			} else if (this.valueFunction) {
 				let key = keys[i];
-				let temp = await this.valueFunction(key);
-				if (temp != null) this.put(key, temp, this.ttl);
-				return temp;
+				try {
+					let temp = await this.valueFunction(key);
+					if (temp != null) this.put(key, temp, this.ttl);
+					return temp;
+				} catch (err) {
+					console.log(err);
+				}
+				return null;
 			} else return null;
 		}));
 		return res;
