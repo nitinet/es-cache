@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
 import memcached from 'memcached';
 import { IOption } from '../types.js';
 import IStore from './IStore.js';

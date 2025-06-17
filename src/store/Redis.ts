@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
 import * as redis from 'redis';
 import { IOption } from '../types.js';
 import IStore from './IStore.js';
