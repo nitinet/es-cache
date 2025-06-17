@@ -1,19 +1,15 @@
 {
-	"compilerOptions": {
-		"module": "ES2022",
-		"target": "ES2022",
-		"moduleResolution": "Node",
-		"outDir": "./dist",
-		"sourceMap": true,
-		"allowSyntheticDefaultImports": true,
-		"removeComments": true,
-		"incremental": true,
-		"strict": true
-	},
-	"include": [
-		"src/**/*"
-	],
-	"exclude": [
-		"node_modules"
-	]
+  "compilerOptions": {
+    "module": "es2022",
+    "target": "es2022",
+    "moduleResolution": "Node",
+    "inlineSourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "removeComments": true,
+    "incremental": true,
+    "strict": true,
+    "outDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
