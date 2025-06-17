@@ -42,7 +42,7 @@ class Cache<K, V> {
 
   async getOrThrow(key: K): Promise<NonNullable<V>> {
     let val = await this.get(key);
-    if (!val) throw new EvalError(this.opts.errorMsg ?? 'Value Not Found');
+    if (!val) throw new EvalError(`Value Not Found for key: ${key}`);
     return val;
   }
 

@@ -5,9 +5,9 @@ abstract class IStore<K, V> {
   ttl: number;
   limit: number | null;
 
-  transformer: ((data: string) => V) | null;
+  transformer: ((data: unknown) => V) | null;
 
-  constructor(valueFunction?: StoreCallback<K, V>, ttl: number = 0, limit?: number, transformer?: (data: string) => V) {
+  constructor(valueFunction?: StoreCallback<K, V>, ttl: number = 0, limit?: number, transformer?: (data: unknown) => V) {
     this.valueFunction = valueFunction ?? null;
     this.ttl = ttl;
     this.limit = limit ?? null;

@@ -9,8 +9,7 @@ type IOption<K, V> = {
   storeType?: StoreType;
   client?: any;
   prefix?: string;
-  errorMsg?: string;
-  transformer?: (data: string) => V;
+  transformer?: (data: unknown) => V;
 };
 
 export { StoreCallback, StoreType, IOption };
