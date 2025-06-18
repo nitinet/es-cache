@@ -83,5 +83,13 @@ class Cache<K, V> {
   }
 }
 
-export default Cache;
-export { IOption };
+const cache = async <K, V>(opts?: IOption<K, V>) => {
+  const cacheInstance = new Cache<K, V>(opts);
+  await cacheInstance.init();
+
+  return cacheInstance;
+};
+
+export default cache;
+
+export { IOption, Cache };
