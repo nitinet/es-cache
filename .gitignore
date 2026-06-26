@@ -18,8 +18,4 @@ tsconfig.tsbuildinfo
 yarn.*
 .yarn*
 pnpm-lock.yaml
-
-# dotenv environment variables file
-.env
-
-.DS_Store
+package-lock.json
